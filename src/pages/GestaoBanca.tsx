@@ -72,9 +72,9 @@ export default function GestaoBanca() {
     data: '',
     jogo: '',
     valor: '',
-    odd: '',
-    retorno: ''
+    odd: ''
   });
+  const [resultadoAposta, setResultadoAposta] = useState<'ganha' | 'perdida' | null>(null);
   
   // Estado para controlar o nível de visualização dos gráficos
   const [nivelGrafico, setNivelGrafico] = useState<'anual' | 'mensal' | 'diario'>('anual');
@@ -84,23 +84,31 @@ export default function GestaoBanca() {
   // Handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!resultadoAposta) return;
+    
     setIsSubmitting(true);
     
     const mercado = mercadoSelecionado === 'Outro' ? mercadoOutro : mercadoSelecionado;
+    const valor = parseFloat(formData.valor);
+    const odd = parseFloat(formData.odd);
+    
+    // Calcular retorno baseado no resultado
+    const retorno = resultadoAposta === 'ganha' ? valor * odd : 0;
     
     await addAposta({
       data: formData.data,
       jogo: formData.jogo,
       mercado,
-      valor: parseFloat(formData.valor),
-      odd: parseFloat(formData.odd),
-      retorno: parseFloat(formData.retorno)
+      valor,
+      odd,
+      retorno
     });
     
     // Reset form
-    setFormData({ data: '', jogo: '', valor: '', odd: '', retorno: '' });
+    setFormData({ data: '', jogo: '', valor: '', odd: '' });
     setMercadoSelecionado('');
     setMercadoOutro('');
+    setResultadoAposta(null);
     setShowNovaAposta(false);
     setIsSubmitting(false);
   };
@@ -628,19 +636,46 @@ export default function GestaoBanca() {
                 </div>
               </div>
 
-              {/* Retorno */}
+              {/* Resultado da Aposta */}
               <div>
-                <label className="block text-sm font-bold text-blue-300/70 uppercase tracking-widest mb-2">Retorno [apostado + profit] (€)</label>
-                <p className="text-xs text-blue-400/60 mb-2">Positivo se ganhou, negativo se perdeu (ex: -20 ou 15.50)</p>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={formData.retorno}
-                  onChange={(e) => setFormData(prev => ({ ...prev, retorno: e.target.value }))}
-                  placeholder="0.00"
-                  required
-                  className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white placeholder:text-blue-500/40 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                />
+                <label className="block text-sm font-bold text-blue-300/70 uppercase tracking-widest mb-2">Resultado</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setResultadoAposta('ganha')}
+                    className={`py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                      resultadoAposta === 'ganha'
+                        ? 'bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)]'
+                        : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
+                    } cursor-pointer`}
+                  >
+                    <Trophy className="w-5 h-5" />
+                    Aposta Ganha
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setResultadoAposta('perdida')}
+                    className={`py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                      resultadoAposta === 'perdida'
+                        ? 'bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.4)]'
+                        : 'bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20'
+                    } cursor-pointer`}
+                  >
+                    <X className="w-5 h-5" />
+                    Aposta Perdida
+                  </button>
+                </div>
+                {resultadoAposta && formData.valor && formData.odd && (
+                  <p className="text-sm mt-3 text-center">
+                    <span className="text-blue-300/70">Profit: </span>
+                    <span className={`font-bold ${resultadoAposta === 'ganha' ? 'text-emerald-400' : 'text-red-400'}`}>
+                      {resultadoAposta === 'ganha' 
+                        ? `+${((parseFloat(formData.valor) * parseFloat(formData.odd)) - parseFloat(formData.valor)).toFixed(2)}€`
+                        : `-${parseFloat(formData.valor).toFixed(2)}€`
+                      }
+                    </span>
+                  </p>
+                )}
               </div>
 
               {/* Botões */}
@@ -654,7 +689,7 @@ export default function GestaoBanca() {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !resultadoAposta || !formData.data || !formData.jogo || !formData.valor || !formData.odd || !mercadoSelecionado || (mercadoSelecionado === 'Outro' && !mercadoOutro)}
                   className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
