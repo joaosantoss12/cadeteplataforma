@@ -41,7 +41,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-2 mb-5 text-slate-300 font-medium text-sm sm:text-base">
             <Users className="w-5 h-5 text-indigo-400 shrink-0" />
             <p>
-              Mais de 1200 membros faturam. <span className="text-red-400 font-bold ml-1">Vagas a fechar!</span>
+              Mais de 12000 membros faturam. <span className="text-red-400 font-bold ml-1">Vagas a fechar!</span>
             </p>
           </div>
           
