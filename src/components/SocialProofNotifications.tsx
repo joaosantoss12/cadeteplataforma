@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle, Flame, Sparkles, Crown, X } from 'lucide-react';
+import { CheckCircle, Flame, Sparkles, X } from 'lucide-react';
 
 interface Notification {
   id: number;
   name: string;
   action: string;
-  type: 'free' | 'submundo' | 'monthly' | 'quarterly' | 'yearly';
+  type: 'free' | 'submundo' | 'desafios';
 }
 
 const names = [
@@ -27,25 +27,19 @@ const names = [
 const actions = {
   free: 'entrou no grupo grátis',
   submundo: 'juntou-se ao Cadete Submundo',
-  monthly: 'subscreveu mensalmente o grupo Desafios',
-  quarterly: 'subscreveu trimestralmente o grupo Desafios',
-  yearly: 'subscreveu anualmente o grupo Desafios'
+  desafios: 'juntou-se ao grupo Desafios'
 };
 
 const icons = {
   free: CheckCircle,
   submundo: Flame,
-  monthly: Sparkles,
-  quarterly: Sparkles,
-  yearly: Crown
+  desafios: Sparkles
 };
 
 const colors = {
   free: 'from-blue-600 to-indigo-600',
   submundo: 'from-indigo-600 to-purple-600',
-  monthly: 'from-blue-500 to-indigo-500',
-  quarterly: 'from-indigo-500 to-purple-500',
-  yearly: 'from-purple-600 to-pink-600'
+  desafios: 'from-blue-500 to-indigo-500'
 };
 
 export default function SocialProofNotifications() {
@@ -55,8 +49,7 @@ export default function SocialProofNotifications() {
   useEffect(() => {
     const createNotification = () => {
       const randomName = names[Math.floor(Math.random() * names.length)];
-      const types: Array<'free' | 'submundo' | 'monthly' | 'quarterly' | 'yearly'> = 
-        ['free', 'submundo', 'monthly', 'quarterly', 'yearly'];
+      const types: Array<'free' | 'submundo' | 'desafios'> = ['free', 'submundo', 'desafios'];
       const randomType = types[Math.floor(Math.random() * types.length)];
 
       const notification: Notification = {
