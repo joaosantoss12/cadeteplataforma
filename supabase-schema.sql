@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   nome TEXT,
   email TEXT NOT NULL,
+  role TEXT DEFAULT 'user' CHECK (role IN ('user', 'admin')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -28,6 +29,34 @@ CREATE POLICY "Utilizadores podem atualizar o próprio perfil" ON profiles
 
 CREATE POLICY "Utilizadores podem inserir o próprio perfil" ON profiles
   FOR INSERT WITH CHECK (auth.uid() = id);
+
+-- =====================================================
+-- Tabela: configuracoes (Settings do Sistema)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS configuracoes (
+  id SERIAL PRIMARY KEY,
+  chave TEXT NOT NULL UNIQUE,
+  valor TEXT NOT NULL,
+  descricao TEXT,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- RLS para configuracoes
+ALTER TABLE configuracoes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Qualquer pessoa pode ver configurações" ON configuracoes
+  FOR SELECT TO authenticated, anon USING (true);
+
+CREATE POLICY "Apenas admins podem modificar configurações" ON configuracoes
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+-- Inserir configurações padrão
+INSERT INTO configuracoes (chave, valor, descricao) VALUES
+  ('preco_analise_premium', '5.00', 'Preço de cada análise premium em euros'),
+  ('preco_grupo_desafios', '49.99', 'Preço do grupo Desafios em euros')
+ON CONFLICT (chave) DO NOTHING;
 
 -- =====================================================
 -- Tabela: apostas (Gestão de Banca)
@@ -80,11 +109,26 @@ CREATE TABLE IF NOT EXISTS estadios (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- RLS para estadios (leitura pública)
+-- RLS para estadios (leitura pública, escrita apenas para admins)
 ALTER TABLE estadios ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Qualquer pessoa pode ver estádios" ON estadios
   FOR SELECT TO authenticated, anon USING (true);
+
+CREATE POLICY "Apenas admins podem inserir estádios" ON estadios
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Apenas admins podem atualizar estádios" ON estadios
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Apenas admins podem apagar estádios" ON estadios
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
 
 -- =====================================================
 -- Tabela: analise_dia
@@ -113,6 +157,21 @@ ALTER TABLE analise_dia ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Utilizadores autenticados podem ver análises do dia" ON analise_dia
   FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Apenas admins podem inserir análises do dia" ON analise_dia
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Apenas admins podem atualizar análises do dia" ON analise_dia
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Apenas admins podem apagar análises do dia" ON analise_dia
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
 
 -- =====================================================
 -- Tabela: analise_premium
@@ -143,6 +202,21 @@ ALTER TABLE analise_premium ENABLE ROW LEVEL SECURITY;
 -- Qualquer utilizador autenticado pode ver os metadados básicos
 CREATE POLICY "Utilizadores podem ver metadados de análises premium" ON analise_premium
   FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Apenas admins podem inserir análises premium" ON analise_premium
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Apenas admins podem atualizar análises premium" ON analise_premium
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
+
+CREATE POLICY "Apenas admins podem apagar análises premium" ON analise_premium
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+  );
 
 -- =====================================================
 -- Tabela: compras_premium

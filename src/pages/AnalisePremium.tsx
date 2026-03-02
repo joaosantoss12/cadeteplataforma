@@ -2,10 +2,15 @@ import {
   Crown, 
   Lock,
   Sparkles,
-  CheckCircle2
+  CheckCircle2,
+  Loader2
 } from 'lucide-react';
+import { useConfiguracoes } from '../hooks/useAdmin';
 
 export default function AnalisePremium() {
+  const { getConfiguracao, loading } = useConfiguracoes();
+  const precoAnalise = getConfiguracao('preco_analise_premium') || '5.00';
+
   return (
     <div className="space-y-10 animate-in fade-in duration-500 pb-16">
       
@@ -17,7 +22,7 @@ export default function AnalisePremium() {
             Análises <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Premium</span>
           </h1>
           <p className="mt-3 text-blue-200/70 max-w-2xl text-lg">
-            As melhores análises VIP do Cadete. Jogos estudados ao mais ínfimo detalhe com taxa de acerto superior a 75%. Apenas 5€ por análise.
+            As melhores análises VIP do Cadete. Jogos estudados ao mais ínfimo detalhe com taxa de acerto superior a 75%. Apenas {loading ? '...' : `${parseFloat(precoAnalise).toFixed(2)}€`} por análise.
           </p>
         </div>
         
@@ -86,7 +91,11 @@ export default function AnalisePremium() {
               <div className="bg-gradient-to-r from-[#0a1b42] to-[#081533] border border-blue-500/30 rounded-2xl p-6 inline-block">
                 <p className="text-sm text-blue-400/80 uppercase tracking-widest mb-2">Pagamento Único</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-white">5€</span>
+                  {loading ? (
+                    <Loader2 className="w-8 h-8 animate-spin text-white" />
+                  ) : (
+                    <span className="text-5xl font-black text-white">{parseFloat(precoAnalise).toFixed(2)}€</span>
+                  )}
                   <span className="text-blue-400/60 font-medium text-xl">/análise</span>
                 </div>
               </div>

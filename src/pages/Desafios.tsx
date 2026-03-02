@@ -8,10 +8,15 @@ import {
   Swords,
   Crown,
   Zap,
-  Star
+  Star,
+  Loader2
 } from 'lucide-react';
+import { useConfiguracoes } from '../hooks/useAdmin';
 
 export default function Desafios() {
+  const { getConfiguracao, loading } = useConfiguracoes();
+  const precoDesafios = getConfiguracao('preco_grupo_desafios') || '49.99';
+
   return (
     <div className="space-y-10 animate-in fade-in duration-500 pb-16">
       
@@ -189,7 +194,11 @@ export default function Desafios() {
                 <p className="text-blue-200/60 text-sm">Pagamento único. Acesso completo e vitalício ao grupo de desafios e todas as ferramentas.</p>
             </div>
             <div className="mb-8 text-center">
-                <span className="text-6xl font-black text-white">50€</span>
+                {loading ? (
+                  <Loader2 className="w-10 h-10 animate-spin text-white mx-auto" />
+                ) : (
+                  <span className="text-6xl font-black text-white">{parseFloat(precoDesafios).toFixed(2)}€</span>
+                )}
                 <p className="text-emerald-400 font-bold text-sm mt-2">Pagamento Único</p>
             </div>
             

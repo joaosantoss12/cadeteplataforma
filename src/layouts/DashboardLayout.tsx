@@ -13,7 +13,8 @@ import {
   LineChart,
   Bell,
   Menu, // Ícone do hambúrguer
-  X // Ícone para fechar
+  X, // Ícone para fechar
+  Shield // Ícone Admin
 } from 'lucide-react';
 import SocialProofNotifications from '../components/SocialProofNotifications';
 import { useAuth } from '../contexts/AuthContext';
@@ -21,7 +22,7 @@ import { useAuth } from '../contexts/AuthContext';
 export default function DashboardLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, isAdmin } = useAuth();
   
   // Estados para menus
   const [analisesOpen, setAnalisesOpen] = useState(false);
@@ -168,6 +169,21 @@ export default function DashboardLayout() {
               </div>
             )}
           </div>
+
+          {/* Link Admin (apenas para admins) */}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              onClick={() => setIsMenuOpen(false)}
+              className={`flex items-center px-3 py-3 rounded-xl transition-all duration-200 mt-4 ${location.pathname === '/admin' 
+                ? 'bg-gradient-to-r from-yellow-600 to-orange-600 text-white font-bold shadow-[0_0_20px_rgba(234,179,8,0.3)]' 
+                : 'text-yellow-400/80 hover:bg-yellow-900/20 hover:text-yellow-300 border border-yellow-500/30'
+              }`}
+            >
+              <Shield className={`w-5 h-5 mr-3 ${location.pathname === '/admin' ? 'text-white' : 'text-yellow-400/70'}`} />
+              Painel Admin
+            </Link>
+          )}
         </nav>
 
         {/* Rodapé da Sidebar */}

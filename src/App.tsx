@@ -10,6 +10,7 @@ import AnaliseDia from './pages/AnaliseDia';
 import AnalisePremium from './pages/AnalisePremium';
 import CapitansBet from './pages/CapitansBet';
 import GestaoBanca from './pages/GestaoBanca';
+import Admin from './pages/Admin';
 import Login from './pages/Login';
 import Registo from './pages/Registo';
 import Termos from './pages/Termos';
@@ -42,6 +43,7 @@ function App() {
             <Route path="/analise-dia" element={<AnaliseDia />} />
             <Route path="/analise-premium" element={<AnalisePremium />} />
             <Route path="/capitansbet" element={<CapitansBet />} />
+            <Route path="/admin" element={<Admin />} />
           </Route>
         </Route>
       </Routes>

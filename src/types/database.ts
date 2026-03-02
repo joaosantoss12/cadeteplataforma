@@ -15,6 +15,7 @@ export interface Database {
           id: string
           nome: string | null
           email: string
+          role: 'user' | 'admin'
           created_at: string
           updated_at: string
         }
@@ -22,6 +23,7 @@ export interface Database {
           id: string
           nome?: string | null
           email: string
+          role?: 'user' | 'admin'
           created_at?: string
           updated_at?: string
         }
@@ -29,7 +31,33 @@ export interface Database {
           id?: string
           nome?: string | null
           email?: string
+          role?: 'user' | 'admin'
           created_at?: string
+          updated_at?: string
+        }
+      }
+      
+      // Tabela de Configurações do Sistema
+      configuracoes: {
+        Row: {
+          id: number
+          chave: string
+          valor: string
+          descricao: string | null
+          updated_at: string
+        }
+        Insert: {
+          id?: number
+          chave: string
+          valor: string
+          descricao?: string | null
+          updated_at?: string
+        }
+        Update: {
+          id?: number
+          chave?: string
+          valor?: string
+          descricao?: string | null
           updated_at?: string
         }
       }
@@ -257,6 +285,10 @@ export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type Aposta = Database['public']['Tables']['apostas']['Row'];
 export type ApostaInsert = Database['public']['Tables']['apostas']['Insert'];
 export type Estadio = Database['public']['Tables']['estadios']['Row'];
+export type EstadioInsert = Database['public']['Tables']['estadios']['Insert'];
 export type AnaliseDia = Database['public']['Tables']['analise_dia']['Row'];
+export type AnaliseDiaInsert = Database['public']['Tables']['analise_dia']['Insert'];
 export type AnalisePremium = Database['public']['Tables']['analise_premium']['Row'];
+export type AnalisePremiumInsert = Database['public']['Tables']['analise_premium']['Insert'];
 export type CompraPremium = Database['public']['Tables']['compras_premium']['Row'];
+export type Configuracao = Database['public']['Tables']['configuracoes']['Row'];
