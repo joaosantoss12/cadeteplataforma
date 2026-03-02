@@ -15,7 +15,7 @@ import Login from './pages/Login';
 import Registo from './pages/Registo';
 import Termos from './pages/Termos';
 import Privacidade from './pages/Privacidade';
-
+ 
 function App() {
   return (
     <BrowserRouter>
