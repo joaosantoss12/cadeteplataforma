@@ -1,0 +1,220 @@
+import { 
+  Map, 
+  Coins, 
+  Trophy, 
+  CheckCircle2,  
+  Compass, 
+  ArrowRight,
+  Swords,
+  Crown,
+  Zap,
+  Star
+} from 'lucide-react';
+
+export default function Desafios() {
+  return (
+    <div className="space-y-10 animate-in fade-in duration-500 pb-16">
+      
+      {/* Cabeçalho da Página - Tema Aventura/Tesouro */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-blue-900/30 pb-6">
+        <div>
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight flex items-center gap-3 drop-shadow-lg">
+            <Compass className="w-10 h-10 text-blue-500" />
+            Desafios do <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Cadete</span>
+          </h1>
+          <p className="mt-3 text-blue-200/70 max-w-2xl text-lg">
+            A verdadeira caça ao tesouro. Pegamos numa 'stake' baixa e alavancamos passo a passo através de apostas analisadas ao detalhe até ao fim do desafio.
+          </p>
+        </div>
+        
+        {/* Caixa de Estatísticas do Tesouro */}
+        <div className="bg-gradient-to-br from-[#0a1b42] to-[#081533] border border-blue-500/30 p-5 rounded-2xl flex items-center gap-5 shrink-0 shadow-[0_0_20px_rgba(37,99,235,0.1)] relative overflow-hidden">
+            <div className="absolute -right-4 -top-4 opacity-10">
+                <Map className="w-24 h-24 text-blue-500" />
+            </div>
+            <div className="w-14 h-14 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/30 shrink-0 relative z-10">
+                <Coins className="w-7 h-7 text-blue-400" />
+            </div>
+            <div className="relative z-10">
+                <p className="text-sm font-bold text-blue-400/80 uppercase tracking-widest mb-1">Missão Atual</p>
+                <div className="flex items-center gap-2">
+                    <span className="text-2xl font-black text-white">25€</span>
+                    <ArrowRight className="w-5 h-5 text-blue-400/50" />
+                    <span className="text-3xl font-black text-blue-400">200€</span>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      {/* O MAPA DO TESOURO (Stepper Visual) */}
+      <div className="bg-[#081533]/80 border border-blue-900/40 rounded-3xl p-6 md:p-10 shadow-xl relative overflow-hidden">
+        {/* Efeito visual de fundo de mapa pergaminho sutil */}
+        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500 via-transparent to-transparent"></div>
+        
+        <h3 className="text-2xl font-bold text-white mb-12 flex items-center gap-3 relative z-10">
+            <Map className="w-6 h-6 text-blue-500" /> 
+            Rota do Desafio 200€
+        </h3>
+
+        {/* Container do Caminho */}
+        <div className="relative z-10 max-w-5xl mx-auto">
+            
+            {/* LINHA TRACEJADA - Fundo (Adapta-se a Mobile/Desktop) */}
+            <div className="absolute left-[27px] top-0 bottom-0 w-1 border-l-2 border-dashed border-blue-800/60 md:hidden z-0"></div>
+            <div className="hidden md:block absolute top-[27px] left-0 right-0 h-1 border-t-2 border-dashed border-blue-800/60 z-0"></div>
+
+            <div className="flex flex-col md:flex-row justify-between gap-10 md:gap-4 relative z-10">
+                
+                {/* Passo 1 - Concluído */}
+                <div className="flex md:flex-col items-start md:items-center relative group w-full md:w-1/4">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 z-10 shadow-lg border-4 transition-all duration-300 bg-emerald-500/20 border-emerald-500 text-emerald-400">
+                        <CheckCircle2 className="w-6 h-6" />
+                    </div>
+                    <div className="ml-6 md:ml-0 md:mt-6 w-full opacity-100 text-left md:text-center">
+                        <div className="inline-block px-3 py-1 bg-[#0a1b42] border border-blue-900/40 rounded-lg mb-2">
+                            <span className="text-xs font-black uppercase tracking-widest text-blue-400">Passo 1</span>
+                        </div>
+                        <h4 className="text-lg font-bold text-white mb-1">Valor: 25€</h4>
+                        <p className="text-sm text-blue-300/70 mb-2">Vitória do Arsenal <span className="font-bold text-blue-200">(@1.80)</span></p>
+                        <p className="text-emerald-400 font-bold text-sm">Retorno: 45€ ✓</p>
+                    </div>
+                </div>
+
+                {/* Passo 2 - Concluído */}
+                <div className="flex md:flex-col items-start md:items-center relative group w-full md:w-1/4">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 z-10 shadow-lg border-4 transition-all duration-300 bg-emerald-500/20 border-emerald-500 text-emerald-400">
+                        <CheckCircle2 className="w-6 h-6" />
+                    </div>
+                    <div className="ml-6 md:ml-0 md:mt-6 w-full opacity-100 text-left md:text-center">
+                        <div className="inline-block px-3 py-1 bg-[#0a1b42] border border-blue-900/40 rounded-lg mb-2">
+                            <span className="text-xs font-black uppercase tracking-widest text-blue-400">Passo 2</span>
+                        </div>
+                        <h4 className="text-lg font-bold text-white mb-1">Valor: 45€</h4>
+                        <p className="text-sm text-blue-300/70 mb-2">Over 2.5 Golos (City) <span className="font-bold text-blue-200">(@1.80)</span></p>
+                        <p className="text-emerald-400 font-bold text-sm">Retorno: 81€ ✓</p>
+                    </div>
+                </div>
+
+                {/* Passo 3 - Atual */}
+                <div className="flex md:flex-col items-start md:items-center relative group w-full md:w-1/4">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 z-10 shadow-lg border-4 transition-all duration-300 bg-blue-500 border-blue-400 text-white shadow-[0_0_20px_rgba(37,99,235,0.5)] scale-110">
+                        <Swords className="w-6 h-6 animate-pulse" />
+                    </div>
+                    <div className="ml-6 md:ml-0 md:mt-6 w-full opacity-100 text-left md:text-center">
+                        <div className="inline-block px-3 py-1 bg-[#0a1b42] border border-blue-900/40 rounded-lg mb-2">
+                            <span className="text-xs font-black uppercase tracking-widest text-blue-400">Passo 3</span>
+                        </div>
+                        <h4 className="text-lg font-bold text-white mb-1">Valor: 81€</h4>
+                        <p className="text-sm text-blue-300/70 mb-2">Ambas Marcam (Real Madrid) <span className="font-bold text-blue-200">(@1.75)</span></p>
+                    </div>
+                </div>
+
+                {/* Passo 4 - Bloqueado (Tesouro Final) */}
+                <div className="flex md:flex-col items-start md:items-center relative group w-full md:w-1/4">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0 z-10 shadow-lg border-4 transition-all duration-300 bg-[#0a1b42] border-blue-900/50 text-blue-800/50">
+                        <Trophy className="w-6 h-6 text-blue-600/50" />
+                    </div>
+                    <div className="ml-6 md:ml-0 md:mt-6 w-full opacity-50 text-left md:text-center">
+                        <div className="inline-block px-3 py-1 bg-[#0a1b42] border border-blue-900/40 rounded-lg mb-2">
+                            <span className="text-xs font-black uppercase tracking-widest text-blue-400">Passo 4</span>
+                        </div>
+                        <h4 className="text-lg font-bold text-white mb-1">Valor: 141.75€</h4>
+                        <p className="text-sm text-blue-300/70 mb-2">O Tesouro Final <span className="font-bold text-blue-200">(@1.45)</span></p>
+                        <p className="text-blue-500/50 font-bold text-sm">Alvo: 205.53€</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+      </div>
+
+      {/* Cartão de Ação - Passo Atual */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-1 shadow-[0_0_30px_rgba(37,99,235,0.2)] transform hover:-translate-y-1 transition-transform">
+        <div className="bg-[#03091a] rounded-[22px] p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 h-full relative overflow-hidden">
+            
+            {/* Fundo decorativo brilhante */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[80px] rounded-full pointer-events-none"></div>
+
+            <div className="flex-1 relative z-10 text-center md:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                    Aposta Pronta a Copiar
+                </div>
+                <h3 className="text-3xl font-black text-white mb-2">Entrada do Passo 3</h3>
+                <p className="text-blue-200/80">O barco já partiu e estamos a meio da viagem. Copia a entrada de 81€ agora mesmo e vamos em busca do próximo ponto do mapa.</p>
+            </div>
+
+            <div className="w-full md:w-auto shrink-0 relative z-10">
+                <a 
+                    href="https://t.me/cadetesuport?text=Cadete%20quero%20fazer%20parte%20do%20desafio%20%F0%9F%92%AA%F0%9F%8F%BC%F0%9F%9A%80"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full md:w-auto bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-400 hover:to-indigo-400 text-white font-black text-sm py-3 px-6 rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all uppercase tracking-wide flex items-center justify-center gap-2 cursor-pointer"
+                >
+                    <Coins className="w-5 h-5" />
+                    Entrar gratuitamente
+                </a>
+            </div>
+        </div>
+      </div>
+
+      {/* --- DIVISOR / TÍTULO SUBSCRIÇÕES --- */}
+      <div className="py-12">
+        <div className="border-t border-blue-900/30 mb-12"></div>
+        <div>
+          <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight flex items-center gap-3 drop-shadow-lg">
+            <Crown className="w-10 h-10 text-blue-500" />
+            Acesso direto ao grupo de <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Desafios</span>
+          </h2>
+          <p className="mt-3 text-blue-200/70 max-w-2xl text-lg">
+            Escolhe o plano que melhor se adapta à tua banca. Todos os planos dão acesso integral a todas as ferramentas, análises e ao grupo exclusivo.
+          </p>
+        </div>
+      </div>
+
+      {/* --- CARTÃO DE PREÇO ÚNICO --- */}
+      <div className="flex justify-center pt-6">
+        
+        {/* PLANO ÚNICO */}
+        <div className="bg-gradient-to-b from-[#0a1b42] to-[#081533] border-2 border-indigo-500/50 rounded-3xl p-8 md:p-10 shadow-[0_0_40px_rgba(79,70,229,0.15)] flex flex-col relative w-full max-w-md">
+            
+            {/* Badge de Destaque */}
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-black uppercase tracking-widest py-1.5 px-4 rounded-full shadow-lg flex items-center gap-1.5 whitespace-nowrap">
+                <Star className="w-3.5 h-3.5 fill-white" />
+                Acesso Vitalício
+            </div>
+
+            <div className="mb-6 text-center">
+                <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 mb-2">Plano Desafios</h3>
+                <p className="text-blue-200/60 text-sm">Pagamento único. Acesso completo e vitalício ao grupo de desafios e todas as ferramentas.</p>
+            </div>
+            <div className="mb-8 text-center">
+                <span className="text-6xl font-black text-white">50€</span>
+                <p className="text-emerald-400 font-bold text-sm mt-2">Pagamento Único</p>
+            </div>
+            
+            <ul className="space-y-4 mb-8">
+                {[
+                  'Acesso ao Grupo de Desafios',
+                  'Suporte Prioritário',
+                  'Desafios de Alavancagem',
+                  'Gestão de Banca Exclusiva',
+                  'Mentoria 1on1 (em breve)'
+                ].map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                        <Zap className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5 fill-indigo-400/20" />
+                        <span className="text-white text-sm font-medium">{feature}</span>
+                    </li>
+                ))}
+            </ul>
+
+            <button className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1 cursor-pointer">
+                Comprar Acesso
+            </button>
+        </div>
+
+      </div>
+
+    </div>
+  );
+}
