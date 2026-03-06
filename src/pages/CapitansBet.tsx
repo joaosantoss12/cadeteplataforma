@@ -175,7 +175,7 @@ export default function CapitansBet() {
             {/* CTA Principal */}
             <div className="pt-8 space-y-4">
               <a 
-                href="https://t.me/cadetesuport"
+                href="https://captainspartners.com/processing/click?btag=17471_20645"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xl md:text-2xl py-6 px-16 rounded-2xl shadow-[0_0_60px_rgba(37,99,235,0.7)] hover:shadow-[0_0_80px_rgba(37,99,235,0.9)] transition-all transform hover:scale-105 uppercase tracking-wide cursor-pointer"

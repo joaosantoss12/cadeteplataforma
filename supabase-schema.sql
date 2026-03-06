@@ -323,3 +323,9 @@ INSERT INTO configuracoes (chave, valor, descricao) VALUES
   ('stripe_price_anual',       '', 'Price ID do Stripe para plano Anual (price_xxx)'),
   ('stripe_price_desafios',    '', 'Price ID do Stripe para acesso Desafios único (price_xxx)')
 ON CONFLICT (chave) DO NOTHING;
+
+-- =====================================================
+-- MIGRAÇÃO INSTAGRAM EMBED - Campo post URL em estádios
+-- =====================================================
+ALTER TABLE estadios
+  ADD COLUMN IF NOT EXISTS instagram_post_url TEXT;

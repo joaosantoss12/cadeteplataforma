@@ -109,6 +109,7 @@ export interface Database {
           inauguracao: string
           facto: string
           instagram_link: string
+          instagram_post_url: string | null
           data_visita: string | null
           imagem_bg: string
           icon_color: string
@@ -122,6 +123,7 @@ export interface Database {
           inauguracao: string
           facto: string
           instagram_link: string
+          instagram_post_url?: string | null
           data_visita?: string | null
           imagem_bg?: string
           icon_color?: string
@@ -135,6 +137,7 @@ export interface Database {
           inauguracao?: string
           facto?: string
           instagram_link?: string
+          instagram_post_url?: string | null
           data_visita?: string | null
           imagem_bg?: string
           icon_color?: string

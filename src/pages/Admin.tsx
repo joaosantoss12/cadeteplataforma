@@ -808,6 +808,7 @@ function EstadiosTab() {
     inauguracao: '',
     facto: '',
     instagram_link: '',
+    instagram_post_url: '',
     data_visita: null,
     imagem_bg: 'from-blue-600/20 to-[#081533]',
     icon_color: 'text-blue-500'
@@ -821,6 +822,7 @@ function EstadiosTab() {
       inauguracao: '',
       facto: '',
       instagram_link: '',
+      instagram_post_url: '',
       data_visita: null,
       imagem_bg: 'from-blue-600/20 to-[#081533]',
       icon_color: 'text-blue-500'
@@ -969,7 +971,7 @@ function EstadiosTab() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-blue-300/70 mb-2">Link Instagram</label>
+                <label className="block text-sm font-bold text-blue-300/70 mb-2">Link Instagram (perfil)</label>
                 <input
                   type="url"
                   value={formData.instagram_link}
@@ -978,6 +980,17 @@ function EstadiosTab() {
                   required
                   className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-blue-300/70 mb-2">URL do Post Instagram (para embed)</label>
+                <input
+                  type="url"
+                  value={formData.instagram_post_url || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, instagram_post_url: e.target.value || null }))}
+                  placeholder="https://www.instagram.com/p/XXXXXXXXX/"
+                  className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
+                />
+                <p className="text-blue-400/50 text-xs mt-1">Cola o link direto do post (não do perfil). Opcional.</p>
               </div>
               <div>
                 <label className="block text-sm font-bold text-blue-300/70 mb-2">Cor do Card</label>

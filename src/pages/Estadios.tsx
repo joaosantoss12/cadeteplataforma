@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   MapPin, 
   Calendar, 
@@ -15,6 +15,25 @@ import { useEstadios } from '../hooks/useEstadios';
 export default function Estadios() {
   const { estadios, loading } = useEstadios();
   const [openId, setOpenId] = useState<number | null>(null);
+
+  // Load Instagram embed script once
+  useEffect(() => {
+    if (document.getElementById('instagram-embed-script')) return;
+    const script = document.createElement('script');
+    script.id = 'instagram-embed-script';
+    script.src = '//www.instagram.com/embed.js';
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+  // Re-process embeds when a card opens
+  useEffect(() => {
+    if (openId !== null) {
+      setTimeout(() => {
+        (window as any).instgrm?.Embeds?.process();
+      }, 150);
+    }
+  }, [openId]);
 
   const toggleEstadio = (id: number) => {
     setOpenId(openId === id ? null : id);
@@ -107,7 +126,7 @@ export default function Estadios() {
 
                 <div 
                   className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                    isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+                    isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
                   }`}
                 >
                   <div className="px-5 pb-6 pt-2 md:px-8 md:pb-8 bg-[#03091a]/50 border-t border-blue-900/40">
@@ -145,6 +164,23 @@ export default function Estadios() {
 
                     </div>
                     
+                    {/* Instagram Embed */}
+                    {estadio.instagram_post_url && (
+                      <div className="mb-6">
+                        <h4 className="text-xs font-bold text-blue-400/60 uppercase tracking-widest mb-4 flex items-center gap-2">
+                          <Instagram className="w-4 h-4" /> Vlog nas Bancadas
+                        </h4>
+                        <div className="flex justify-center">
+                          <blockquote
+                            className="instagram-media"
+                            data-instgrm-permalink={estadio.instagram_post_url}
+                            data-instgrm-version="14"
+                            style={{ maxWidth: '540px', width: '100%', minWidth: '0' }}
+                          ></blockquote>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex justify-start">
                       <a 
                         href={estadio.instagram_link} 
@@ -153,7 +189,7 @@ export default function Estadios() {
                         className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 hover:from-purple-500 hover:via-pink-500 hover:to-orange-400 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:shadow-[0_0_30px_rgba(236,72,153,0.5)] transition-all transform hover:-translate-y-1 w-full sm:w-auto justify-center"
                       >
                         <Instagram className="w-5 h-5" />
-                        Ver Vlog nas Bancadas
+                        Ver Perfil Instagram
                         <ExternalLink className="w-4 h-4 ml-1 opacity-70" />
                       </a>
                     </div>
