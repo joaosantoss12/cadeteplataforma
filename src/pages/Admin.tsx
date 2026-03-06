@@ -982,15 +982,15 @@ function EstadiosTab() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-blue-300/70 mb-2">URL do Post Instagram (para embed)</label>
+                <label className="block text-sm font-bold text-blue-300/70 mb-2">URL do Reel Instagram (para embed)</label>
                 <input
                   type="url"
                   value={formData.instagram_post_url || ''}
                   onChange={(e) => setFormData(prev => ({ ...prev, instagram_post_url: e.target.value || null }))}
-                  placeholder="https://www.instagram.com/p/XXXXXXXXX/"
+                  placeholder="https://www.instagram.com/reel/XXXXXXXXX/"
                   className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
                 />
-                <p className="text-blue-400/50 text-xs mt-1">Cola o link direto do post (não do perfil). Opcional.</p>
+                <p className="text-blue-400/50 text-xs mt-1">Cola o link direto do Reel (formato /reel/). Opcional.</p>
               </div>
               <div>
                 <label className="block text-sm font-bold text-blue-300/70 mb-2">Cor do Card</label>

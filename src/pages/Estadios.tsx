@@ -168,7 +168,7 @@ export default function Estadios() {
                     {estadio.instagram_post_url && (
                       <div className="mb-6">
                         <h4 className="text-xs font-bold text-blue-400/60 uppercase tracking-widest mb-4 flex items-center gap-2">
-                          <Instagram className="w-4 h-4" /> Vlog nas Bancadas
+                          <Instagram className="w-4 h-4" /> Reel nas Bancadas
                         </h4>
                         <div className="flex justify-center">
                           <blockquote
