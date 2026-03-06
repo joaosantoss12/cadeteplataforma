@@ -19,7 +19,7 @@ import { useConfiguracoes } from '../hooks/useAdmin';
 import { useStripeCheckout } from '../hooks/useStripeCheckout';
 import { supabase } from '../lib/supabase';
 
-const TELEGRAM_LINK = 'https://t.me/+xxxxxxxxxxxx'; // ← substitui pelo link do teu grupo privado
+const TELEGRAM_LINK = 'https://t.me/+pP0OBzDU65MwYzlk'; 
 
 export default function Desafios() {
   const { getConfiguracao, loading } = useConfiguracoes();
