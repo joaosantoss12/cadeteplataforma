@@ -5,7 +5,6 @@ import Dashboard from './pages/Dashboard';
 import Estadios from './pages/Estadios';
 import Submundo from './pages/Submundo';
 import Desafios from './pages/Desafios';
-import Subscricoes from './pages/Subscricoes';
 import AnaliseDia from './pages/AnaliseDia';
 import AnalisePremium from './pages/AnalisePremium';
 import CapitansBet from './pages/CapitansBet';
