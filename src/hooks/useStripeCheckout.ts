@@ -6,7 +6,7 @@ export function useStripeCheckout() {
   const [error, setError] = useState<string | null>(null);
 
   const startCheckout = async (
-    priceId: string,
+    price: string | { amount: number; name: string },
     mode: 'subscription' | 'payment',
     plan: string,
   ) => {
@@ -14,7 +14,7 @@ export function useStripeCheckout() {
     setError(null);
 
     try {
-      if (!priceId) {
+      if (!price || (typeof price === 'string' && !price)) {
         throw new Error('Preço ainda não configurado. Contacta o administrador.');
       }
 
@@ -22,6 +22,10 @@ export function useStripeCheckout() {
       if (!session) {
         throw new Error('Precisas de fazer login para continuar.');
       }
+
+      const body = typeof price === 'string'
+        ? { priceId: price, mode, plan }
+        : { priceData: price, mode, plan };
 
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout-session`,
@@ -31,7 +35,7 @@ export function useStripeCheckout() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${session.access_token}`,
           },
-          body: JSON.stringify({ priceId, mode, plan }),
+          body: JSON.stringify(body),
         },
       );
 

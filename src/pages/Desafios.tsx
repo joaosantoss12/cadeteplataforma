@@ -20,8 +20,8 @@ export default function Desafios() {
   const { startCheckout, loading: checkoutLoading, error: checkoutError } = useStripeCheckout();
 
   const handleComprar = () => {
-    const priceId = getConfiguracao('stripe_price_desafios') || '';
-    startCheckout(priceId, 'payment', 'desafios');
+    const amount = parseFloat(precoDesafios);
+    startCheckout({ amount, name: 'Acesso Desafios Vitalício' }, 'payment', 'desafios');
   };
 
   return (

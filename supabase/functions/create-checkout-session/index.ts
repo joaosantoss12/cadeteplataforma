@@ -41,14 +41,15 @@ Deno.serve(async (req: Request) => {
       throw new Error('Utilizador não autenticado.');
     }
 
-    const { priceId, mode, plan } = await req.json() as {
-      priceId: string;
+    const { priceId, priceData, mode, plan } = await req.json() as {
+      priceId?: string;
+      priceData?: { amount: number; name: string; currency?: string };
       mode: 'subscription' | 'payment';
       plan: string;
     };
 
-    if (!priceId) {
-      throw new Error('Price ID em falta. Configura os preços Stripe no painel de Admin.');
+    if (!priceId && !priceData) {
+      throw new Error('Price ID ou dados de preço em falta.');
     }
 
     // Get or create Stripe customer
@@ -76,12 +77,23 @@ Deno.serve(async (req: Request) => {
 
     const origin = req.headers.get('origin') || 'http://localhost:5173';
 
+    const lineItem = priceId
+      ? { price: priceId, quantity: 1 }
+      : {
+          price_data: {
+            currency: priceData!.currency || 'eur',
+            unit_amount: Math.round(priceData!.amount * 100),
+            product_data: { name: priceData!.name },
+          },
+          quantity: 1,
+        };
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [lineItem],
       mode,
       success_url: `${origin}/dashboard?payment=success&plan=${plan}`,
-      cancel_url: `${origin}/subscricoes`,
+      cancel_url: `${origin}/desafios`,
       metadata: { supabase_user_id: user.id, plan },
     });
 
