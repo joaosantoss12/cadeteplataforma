@@ -4,12 +4,29 @@ import {
   Crown, 
   ShieldCheck, 
   Zap, 
-  Star 
+  Star,
+  Loader2
 } from 'lucide-react';
+import { useConfiguracoes } from '../hooks/useAdmin';
+import { useStripeCheckout } from '../hooks/useStripeCheckout';
 
 export default function Subscricoes() {
+  const { getConfiguracao } = useConfiguracoes();
+  const { startCheckout, loading: checkoutLoading, error: checkoutError } = useStripeCheckout();
+
+  const handleSubscribe = (plan: 'mensal' | 'trimestral' | 'anual') => {
+    const priceId = getConfiguracao(`stripe_price_${plan}`) || '';
+    startCheckout(priceId, 'subscription', plan);
+  };
   return (
     <div className="space-y-12 animate-in fade-in duration-500 pb-16">
+
+      {/* Erro de checkout */}
+      {checkoutError && (
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-5 py-4 text-sm font-medium">
+          {checkoutError}
+        </div>
+      )}
       
       {/* Cabeçalho */}
       <div>
@@ -75,8 +92,13 @@ export default function Subscricoes() {
                 ))}
             </ul>
 
-            <button className="w-full py-4 rounded-xl font-bold text-white bg-blue-900/40 hover:bg-blue-800/60 border border-blue-700/50 transition-colors">
-                Subscrever Mensal
+            <button
+              onClick={() => handleSubscribe('mensal')}
+              disabled={checkoutLoading}
+              className="w-full py-4 rounded-xl font-bold text-white bg-blue-900/40 hover:bg-blue-800/60 border border-blue-700/50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {checkoutLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+              Subscrever Mensal
             </button>
         </div>
 
@@ -110,8 +132,13 @@ export default function Subscricoes() {
                 ))}
             </ul>
 
-            <button className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1">
-                Subscrever Trimestral
+            <button
+              onClick={() => handleSubscribe('trimestral')}
+              disabled={checkoutLoading}
+              className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {checkoutLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+              Subscrever Trimestral
             </button>
         </div>
 
@@ -138,8 +165,13 @@ export default function Subscricoes() {
                 ))}
             </ul>
 
-            <button className="w-full py-4 rounded-xl font-bold text-white bg-blue-900/40 hover:bg-blue-800/60 border border-blue-700/50 transition-colors">
-                Subscrever Anual
+            <button
+              onClick={() => handleSubscribe('anual')}
+              disabled={checkoutLoading}
+              className="w-full py-4 rounded-xl font-bold text-white bg-blue-900/40 hover:bg-blue-800/60 border border-blue-700/50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {checkoutLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+              Subscrever Anual
             </button>
         </div>
 

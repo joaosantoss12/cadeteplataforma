@@ -39,7 +39,6 @@ function App() {
             <Route path="/estadios" element={<Estadios />} />
             <Route path="/submundo" element={<Submundo />} />
             <Route path="/desafios" element={<Desafios />} />
-            <Route path="/subscricoes" element={<Subscricoes />} />
             <Route path="/analise-dia" element={<AnaliseDia />} />
             <Route path="/analise-premium" element={<AnalisePremium />} />
             <Route path="/capitansbet" element={<CapitansBet />} />

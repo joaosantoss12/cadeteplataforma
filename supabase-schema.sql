@@ -296,3 +296,30 @@ ON CONFLICT DO NOTHING;
 INSERT INTO analise_dia (data, liga, jogo, hora, aposta, odd, analise_contexto, analise_estatisticas_casa, analise_estatisticas_fora, analise_conclusao, resultado) VALUES
   (CURRENT_DATE, 'Premier League', 'Arsenal vs Manchester City', '17:30', 'Over 2.5 Golos', 1.85, 'Confronto direto pelo topo da tabela. Arsenal em casa precisa pontuar para manter vantagem, enquanto o City vem de uma sequência invejável de golos marcados.', 'Nos últimos 5 jogos em casa, o Arsenal marcou pelo menos 2 golos em 4 deles. A média é de 2.6 golos por jogo no Emirates Stadium.', 'O Manchester City marcou em todos os últimos 10 jogos fora. Haaland está numa forma impressionante com 8 golos nos últimos 5 jogos.', 'Com duas equipas ofensivamente fortes e com muito em jogo, a probabilidade de vermos mais de 2 golos é alta. Recomendamos uma aposta de 2-3% da banca.', 'pendente')
 ON CONFLICT DO NOTHING;
+
+-- =====================================================
+-- MIGRAÇÃO STRIPE - Corre este bloco separadamente
+-- se já tens as tabelas base criadas
+-- =====================================================
+
+-- Adicionar colunas de subscrição Stripe à tabela profiles
+ALTER TABLE profiles
+  ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT,
+  ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT,
+  ADD COLUMN IF NOT EXISTS subscription_status TEXT DEFAULT 'inactive'
+    CHECK (subscription_status IN ('active', 'inactive', 'past_due', 'canceled', 'trialing')),
+  ADD COLUMN IF NOT EXISTS subscription_plan TEXT
+    CHECK (subscription_plan IN ('mensal', 'trimestral', 'anual', 'desafios')),
+  ADD COLUMN IF NOT EXISTS subscription_end_date TIMESTAMP WITH TIME ZONE;
+
+-- Índice para pesquisa por stripe_customer_id (usado pelo webhook)
+CREATE INDEX IF NOT EXISTS profiles_stripe_customer_idx ON profiles(stripe_customer_id);
+CREATE INDEX IF NOT EXISTS profiles_stripe_subscription_idx ON profiles(stripe_subscription_id);
+
+-- Adicionar Price IDs do Stripe às configurações (o admin preenche via painel)
+INSERT INTO configuracoes (chave, valor, descricao) VALUES
+  ('stripe_price_mensal',      '', 'Price ID do Stripe para plano Mensal (price_xxx)'),
+  ('stripe_price_trimestral',  '', 'Price ID do Stripe para plano Trimestral (price_xxx)'),
+  ('stripe_price_anual',       '', 'Price ID do Stripe para plano Anual (price_xxx)'),
+  ('stripe_price_desafios',    '', 'Price ID do Stripe para acesso Desafios único (price_xxx)')
+ON CONFLICT (chave) DO NOTHING;

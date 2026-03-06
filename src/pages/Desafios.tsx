@@ -12,13 +12,27 @@ import {
   Loader2
 } from 'lucide-react';
 import { useConfiguracoes } from '../hooks/useAdmin';
+import { useStripeCheckout } from '../hooks/useStripeCheckout';
 
 export default function Desafios() {
   const { getConfiguracao, loading } = useConfiguracoes();
   const precoDesafios = getConfiguracao('preco_grupo_desafios') || '49.99';
+  const { startCheckout, loading: checkoutLoading, error: checkoutError } = useStripeCheckout();
+
+  const handleComprar = () => {
+    const priceId = getConfiguracao('stripe_price_desafios') || '';
+    startCheckout(priceId, 'payment', 'desafios');
+  };
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500 pb-16">
+      
+      {/* Erro de checkout */}
+      {checkoutError && (
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-5 py-4 text-sm font-medium">
+          {checkoutError}
+        </div>
+      )}
       
       {/* Cabeçalho da Página - Tema Aventura/Tesouro */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-blue-900/30 pb-6">
@@ -217,8 +231,13 @@ export default function Desafios() {
                 ))}
             </ul>
 
-            <button className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1 cursor-pointer">
-                Comprar Acesso
+            <button
+              onClick={handleComprar}
+              disabled={checkoutLoading || loading}
+              className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {checkoutLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+              Comprar Acesso
             </button>
         </div>
 
