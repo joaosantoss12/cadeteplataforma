@@ -92,6 +92,8 @@ Deno.serve(async (req: Request) => {
       customer: customerId,
       line_items: [lineItem],
       mode,
+      // MB Way only supports one-time payments (not recurring subscriptions)
+      payment_method_types: mode === 'payment' ? ['card', 'mb_way', 'revolut_pay'] : ['card'],
       success_url: `${origin}/dashboard?payment=success&plan=${plan}`,
       cancel_url: `${origin}/desafios`,
       metadata: { supabase_user_id: user.id, plan },

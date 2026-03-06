@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Map, 
   Coins, 
@@ -9,15 +11,59 @@ import {
   Crown,
   Zap,
   Star,
-  Loader2
+  Loader2,
+  X,
+  Send
 } from 'lucide-react';
 import { useConfiguracoes } from '../hooks/useAdmin';
 import { useStripeCheckout } from '../hooks/useStripeCheckout';
+import { supabase } from '../lib/supabase';
+
+const TELEGRAM_LINK = 'https://t.me/+xxxxxxxxxxxx'; // ← substitui pelo link do teu grupo privado
 
 export default function Desafios() {
   const { getConfiguracao, loading } = useConfiguracoes();
   const precoDesafios = getConfiguracao('preco_grupo_desafios') || '49.99';
   const { startCheckout, loading: checkoutLoading, error: checkoutError } = useStripeCheckout();
+
+  const [jaTemAcesso, setJaTemAcesso] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Check if user already has desafios access
+  useEffect(() => {
+    const checkAccess = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setCheckingAccess(false); return; }
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('subscription_status, subscription_plan')
+        .eq('id', user.id)
+        .single();
+
+      const profile = data as { subscription_status?: string; subscription_plan?: string } | null;
+      if (profile?.subscription_status === 'active' && profile?.subscription_plan === 'desafios') {
+        setJaTemAcesso(true);
+      }
+      setCheckingAccess(false);
+    };
+    checkAccess();
+  }, []);
+
+  // Detect ?payment=success in URL → show modal
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('payment') === 'success' && params.get('plan') === 'desafios') {
+      setJaTemAcesso(true);
+      setShowModal(true);
+      // Clean the URL without reloading
+      navigate('/desafios', { replace: true });
+    }
+  }, [location.search, navigate]);
 
   const handleComprar = () => {
     const amount = parseFloat(precoDesafios);
@@ -26,6 +72,41 @@ export default function Desafios() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500 pb-16">
+
+      {/* Modal de Sucesso */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setShowModal(false)}>
+          <div className="bg-gradient-to-b from-[#0a1b42] to-[#081533] border border-indigo-500/40 rounded-3xl p-8 max-w-md w-full shadow-[0_0_60px_rgba(79,70,229,0.3)] relative" onClick={e => e.stopPropagation()}>
+            <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-blue-400/60 hover:text-white transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Ícone */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 rounded-full bg-emerald-500/10 border-2 border-emerald-500/40 flex items-center justify-center shadow-[0_0_30px_rgba(52,211,153,0.2)]">
+                <CheckCircle2 className="w-10 h-10 text-emerald-400" />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-black text-white text-center mb-2">Pagamento Confirmado!</h2>
+            <p className="text-blue-200/70 text-center text-sm mb-8">
+              O teu acesso ao grupo de Desafios está ativo. Clica no botão abaixo para entrar no grupo privado do Telegram.
+            </p>
+
+            <a
+              href={TELEGRAM_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all flex items-center justify-center gap-2"
+            >
+              <Send className="w-5 h-5" />
+              Entrar no Grupo Telegram
+            </a>
+
+            <p className="text-blue-400/50 text-xs text-center mt-4">Guarda este link — podes aceder sempre através desta página.</p>
+          </div>
+        </div>
+      )}
       
       {/* Erro de checkout */}
       {checkoutError && (
@@ -231,14 +312,35 @@ export default function Desafios() {
                 ))}
             </ul>
 
-            <button
-              onClick={handleComprar}
-              disabled={checkoutLoading || loading}
-              className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
-            >
-              {checkoutLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-              Comprar Acesso
-            </button>
+            {jaTemAcesso ? (
+              <>
+                <button
+                  disabled
+                  className="w-full py-4 rounded-xl font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center gap-2 cursor-not-allowed mb-3"
+                >
+                  <CheckCircle2 className="w-5 h-5" />
+                  Acesso Ativo
+                </button>
+                <a
+                  href={TELEGRAM_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-blue-600/60 to-indigo-600/60 hover:from-blue-600 hover:to-indigo-600 transition-all flex items-center justify-center gap-2 text-sm"
+                >
+                  <Send className="w-4 h-4" />
+                  Entrar no Grupo Telegram
+                </a>
+              </>
+            ) : (
+              <button
+                onClick={handleComprar}
+                disabled={checkoutLoading || loading || checkingAccess}
+                className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-[0_0_20px_rgba(79,70,229,0.4)] transition-all transform hover:-translate-y-1 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {(checkoutLoading || checkingAccess) ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+                Comprar Acesso
+              </button>
+            )}
         </div>
 
       </div>
