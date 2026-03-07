@@ -9,6 +9,10 @@ import {
   Clock,
   AlertCircle,
   X,
+  FileText,
+  TrendingUp,
+  Target,
+  Calendar,
 } from 'lucide-react';
 import { useConfiguracoes } from '../hooks/useAdmin';
 import { useStripeCheckout } from '../hooks/useStripeCheckout';
@@ -113,7 +117,7 @@ export default function AnalisePremium() {
   if (!ativa || !analise) {
     return (
       <div className="space-y-10 animate-in fade-in duration-500 pb-16">
-        <PageHeader />
+        <PageHeader analise={null} />
         <div className="bg-[#03091a] rounded-3xl border border-blue-900/40 p-12 min-h-[400px] flex items-center justify-center">
           <div className="text-center max-w-md space-y-4">
             <div className="w-20 h-20 rounded-full bg-blue-900/30 border border-blue-800/40 flex items-center justify-center mx-auto">
@@ -134,7 +138,7 @@ export default function AnalisePremium() {
     return (
       <div className="space-y-10 animate-in fade-in duration-500 pb-16">
         {showModal && <SuccessModal onClose={() => setShowModal(false)} />}
-        <PageHeader />
+        <PageHeader analise={analise} />
 
         {/* Access countdown */}
         {accessExpiry && (
@@ -144,28 +148,77 @@ export default function AnalisePremium() {
           </div>
         )}
 
-        {/* Analysis content */}
-        <div className="bg-gradient-to-b from-[#0a1b42] to-[#081533] border border-blue-500/30 rounded-3xl p-8 md:p-10 space-y-8 shadow-[0_0_40px_rgba(37,99,235,0.08)]">
-          {/* Match header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-blue-900/30">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-black uppercase tracking-widest text-blue-400 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full">{analise.liga}</span>
-                <span className="text-xs text-blue-300/50">{analise.data} · {analise.hora}</span>
+        {/* Card Principal */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-1 shadow-[0_0_30px_rgba(37,99,235,0.2)]">
+          <div className="bg-[#03091a] rounded-[22px] p-8 md:p-12 relative overflow-hidden">
+
+            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+            <div className="relative z-10 space-y-8">
+
+              {/* Cabeçalho Jogo */}
+              <div className="text-center border-b border-blue-900/30 pb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                  {analise.liga}
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white mb-3">{analise.jogo}</h2>
+                <p className="text-blue-200/60 text-lg">
+                  {analise.data} às {analise.hora}
+                </p>
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-white">{analise.jogo}</h2>
-            </div>
-            <div className="bg-[#03091a]/80 border border-blue-900/40 rounded-xl p-4 text-center shrink-0">
-              <p className="text-xs text-blue-400/60 uppercase tracking-widest mb-1">Aposta</p>
-              <p className="text-lg font-black text-indigo-400">{analise.aposta}</p>
-              <p className="text-yellow-400 font-bold">@{analise.odd}</p>
+
+              {/* Aposta e Odd */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-[#081533] border border-blue-900/40 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                      <Target className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <h3 className="text-sm font-bold text-blue-400 uppercase tracking-widest">Aposta</h3>
+                  </div>
+                  <p className="text-3xl font-black text-white">{analise.aposta}</p>
+                </div>
+
+                <div className="bg-[#081533] border border-blue-900/40 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-emerald-400" />
+                    </div>
+                    <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-widest">Odd</h3>
+                  </div>
+                  <p className="text-3xl font-black text-white">@{Number(analise.odd).toFixed(2)}</p>
+                </div>
+              </div>
+
+              {/* Análise Detalhada */}
+              <div className="bg-[#081533]/80 border border-blue-900/40 rounded-2xl p-8">
+                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                  <FileText className="w-6 h-6 text-blue-500" />
+                  Análise Detalhada
+                </h3>
+                <div className="space-y-4 text-blue-100/90 leading-relaxed">
+                  <p><strong className="text-white">Contexto:</strong> {analise.analise_contexto}</p>
+                  <p><strong className="text-white">Estatísticas Casa:</strong> {analise.analise_estatisticas_casa}</p>
+                  <p><strong className="text-white">Estatísticas Fora:</strong> {analise.analise_estatisticas_fora}</p>
+                  <p><strong className="text-white">Conclusão:</strong> {analise.analise_conclusao}</p>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="flex justify-center pt-4">
+                <a
+                  href="https://t.me/+h5HDhTdXCYo4MzI5"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-base md:text-lg py-5 px-10 rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.6)] hover:shadow-[0_0_60px_rgba(37,99,235,0.8)] transition-all transform hover:-translate-y-1 uppercase tracking-wide border border-blue-400/30 cursor-pointer"
+                >
+                  Discutir no Grupo Grátis
+                </a>
+              </div>
+
             </div>
           </div>
-
-          <AnalysisSection title="Contexto" content={analise.analise_contexto} />
-          <AnalysisSection title="Estatísticas Casa" content={analise.analise_estatisticas_casa} />
-          <AnalysisSection title="Estatísticas Fora" content={analise.analise_estatisticas_fora} />
-          <AnalysisSection title="Conclusão" content={analise.analise_conclusao} highlighted />
         </div>
       </div>
     );
@@ -182,7 +235,7 @@ export default function AnalisePremium() {
         </div>
       )}
 
-      <PageHeader />
+      <PageHeader analise={null} />
 
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-1 shadow-[0_0_30px_rgba(37,99,235,0.2)]">
         <div className="bg-[#03091a] rounded-[22px] p-8 md:p-12 relative overflow-hidden min-h-[600px] flex items-center justify-center">
@@ -251,7 +304,7 @@ export default function AnalisePremium() {
 
 // ─── Sub-components ────────────────────────────────────────────────
 
-function PageHeader() {
+function PageHeader({ analise }: { analise?: AnalisePremiumType | null }) {
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-blue-900/30 pb-6">
       <div>
@@ -263,24 +316,27 @@ function PageHeader() {
           As melhores análises VIP do Cadete. Jogos estudados ao mais ínfimo detalhe com taxa de acerto superior a 75%.
         </p>
       </div>
-      <div className="bg-gradient-to-br from-blue-600 to-indigo-600 border border-blue-400/30 p-5 rounded-2xl flex items-center gap-4 shrink-0 shadow-[0_0_30px_rgba(37,99,235,0.3)]">
-        <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shrink-0">
-          <Sparkles className="w-6 h-6 text-white" />
+      {analise ? (
+        <div className="bg-gradient-to-br from-[#0a1b42] to-[#081533] border border-blue-500/30 p-5 rounded-2xl flex items-center gap-4 shrink-0 shadow-[0_0_20px_rgba(37,99,235,0.1)]">
+          <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/30 shrink-0">
+            <Calendar className="w-6 h-6 text-blue-400" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-blue-400/80 uppercase tracking-widest">Data</p>
+            <p className="text-lg font-black text-white">{analise.data}</p>
+          </div>
         </div>
-        <div>
-          <p className="text-xs font-bold text-white/80 uppercase tracking-widest">Conteúdo</p>
-          <p className="text-lg font-black text-white">Exclusivo</p>
+      ) : (
+        <div className="bg-gradient-to-br from-blue-600 to-indigo-600 border border-blue-400/30 p-5 rounded-2xl flex items-center gap-4 shrink-0 shadow-[0_0_30px_rgba(37,99,235,0.3)]">
+          <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shrink-0">
+            <Sparkles className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-white/80 uppercase tracking-widest">Conteúdo</p>
+            <p className="text-lg font-black text-white">Exclusivo</p>
+          </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function AnalysisSection({ title, content, highlighted = false }: { title: string; content: string; highlighted?: boolean }) {
-  return (
-    <div className={`rounded-2xl p-6 ${highlighted ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-[#03091a]/60 border border-blue-900/30'}`}>
-      <h3 className={`text-sm font-black uppercase tracking-widest mb-3 ${highlighted ? 'text-blue-400' : 'text-blue-400/70'}`}>{title}</h3>
-      <p className="text-blue-100/85 leading-relaxed whitespace-pre-line">{content}</p>
+      )}
     </div>
   );
 }
