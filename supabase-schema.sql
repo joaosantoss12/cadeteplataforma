@@ -55,7 +55,9 @@ CREATE POLICY "Apenas admins podem modificar configurações" ON configuracoes
 -- Inserir configurações padrão
 INSERT INTO configuracoes (chave, valor, descricao) VALUES
   ('preco_analise_premium', '5.00', 'Preço de cada análise premium em euros'),
-  ('preco_grupo_desafios', '49.99', 'Preço do grupo Desafios em euros')
+  ('preco_grupo_desafios', '49.99', 'Preço do grupo Desafios em euros'),
+  ('analise_premium_ativa', 'true', 'Se a análise premium está ativa (true/false)'),
+  ('horas_reset_analise_premium', '24', 'Horas de acesso após compra da análise premium')
 ON CONFLICT (chave) DO NOTHING;
 
 -- =====================================================

@@ -9,6 +9,7 @@ export function useStripeCheckout() {
     price: string | { amount: number; name: string },
     mode: 'subscription' | 'payment',
     plan: string,
+    analise_premium_id?: number,
   ) => {
     setLoading(true);
     setError(null);
@@ -24,8 +25,8 @@ export function useStripeCheckout() {
       }
 
       const body = typeof price === 'string'
-        ? { priceId: price, mode, plan }
-        : { priceData: price, mode, plan };
+        ? { priceId: price, mode, plan, analise_premium_id }
+        : { priceData: price, mode, plan, analise_premium_id };
 
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-checkout-session`,

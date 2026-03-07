@@ -56,8 +56,20 @@ Deno.serve(async (req: Request) => {
         .eq('id', userId);
     }
 
-    if (session.mode === 'payment') {
-      // One-time payment (Desafios lifetime)
+    if (session.mode === 'payment' && plan === 'analise_premium') {
+      // One-time payment for a single premium analysis — record in compras_premium
+      const analiseId = session.metadata?.analise_premium_id;
+      if (analiseId) {
+        await supabase
+          .from('compras_premium')
+          .insert({
+            user_id: userId,
+            analise_premium_id: parseInt(analiseId, 10),
+            data_compra: new Date().toISOString(),
+          });
+      }
+    } else if (session.mode === 'payment') {
+      // One-time payment (e.g. Desafios lifetime)
       await supabase
         .from('profiles')
         .update({

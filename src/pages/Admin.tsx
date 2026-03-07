@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { 
-  Shield, Settings, Calendar, Trophy, MapPin, Plus, Pencil, Trash2, X, Save, Loader2, Euro
+  Shield, Settings, Calendar, Trophy, MapPin, Plus, Pencil, Trash2, X, Save, Loader2, Euro, ToggleLeft, ToggleRight, Clock
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { 
@@ -87,6 +87,7 @@ function ConfiguracoesTab() {
   const [editing, setEditing] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
   const [saving, setSaving] = useState(false);
+  const [toggling, setToggling] = useState<string | null>(null);
 
   const handleEdit = (chave: string, valor: string) => {
     setEditing(chave);
@@ -100,9 +101,17 @@ function ConfiguracoesTab() {
     setSaving(false);
   };
 
-  const configLabels: Record<string, string> = {
-    'preco_analise_premium': 'Preço Análise Premium',
-    'preco_grupo_desafios': 'Preço Grupo Desafios'
+  const handleToggle = async (chave: string, currentValue: string) => {
+    setToggling(chave);
+    await updateConfiguracao(chave, currentValue === 'true' ? 'false' : 'true');
+    setToggling(null);
+  };
+
+  const configMeta: Record<string, { label: string; type: 'price' | 'hours' | 'toggle'; description?: string }> = {
+    'preco_analise_premium': { label: 'Preço Análise Premium', type: 'price' },
+    'preco_grupo_desafios': { label: 'Preço Grupo Desafios', type: 'price' },
+    'analise_premium_ativa': { label: 'Análise Premium Ativa', type: 'toggle', description: 'Liga/desliga a disponibilidade da análise premium para utilizadores' },
+    'horas_reset_analise_premium': { label: 'Horas de Acesso (Premium)', type: 'hours', description: 'Quantas horas o utilizador tem acesso após comprar a análise' },
   };
 
   if (loading) {
@@ -121,54 +130,123 @@ function ConfiguracoesTab() {
       </h2>
       
       <div className="grid gap-4">
-        {configuracoes.map((config) => (
-          <div 
-            key={config.chave}
-            className="bg-[#03091a]/50 border border-blue-900/30 rounded-xl p-4 flex items-center justify-between"
-          >
-            <div>
-              <p className="text-white font-bold">{configLabels[config.chave] || config.chave}</p>
-              <p className="text-blue-300/60 text-sm">{config.descricao}</p>
+        {configuracoes.map((config) => {
+          const meta = configMeta[config.chave];
+          const type = meta?.type ?? 'price';
+
+          return (
+            <div
+              key={config.chave}
+              className="bg-[#03091a]/50 border border-blue-900/30 rounded-xl p-4 flex items-center justify-between gap-4"
+            >
+              <div className="min-w-0">
+                <p className="text-white font-bold">{meta?.label ?? config.chave}</p>
+                <p className="text-blue-300/60 text-sm">{meta?.description ?? config.descricao}</p>
+              </div>
+
+              {/* TOGGLE */}
+              {type === 'toggle' && (
+                <button
+                  onClick={() => handleToggle(config.chave, config.valor)}
+                  disabled={toggling === config.chave}
+                  className="shrink-0 flex items-center gap-2 cursor-pointer disabled:opacity-60"
+                >
+                  {toggling === config.chave ? (
+                    <Loader2 className="w-7 h-7 animate-spin text-blue-400" />
+                  ) : config.valor === 'true' ? (
+                    <ToggleRight className="w-10 h-10 text-emerald-400" />
+                  ) : (
+                    <ToggleLeft className="w-10 h-10 text-blue-900/60" />
+                  )}
+                  <span className={`text-sm font-bold ${config.valor === 'true' ? 'text-emerald-400' : 'text-blue-400/50'}`}>
+                    {config.valor === 'true' ? 'Ativo' : 'Inativo'}
+                  </span>
+                </button>
+              )}
+
+              {/* HOURS input */}
+              {type === 'hours' && (
+                editing === config.chave ? (
+                  <div className="flex items-center gap-2 shrink-0">
+                    <input
+                      type="number"
+                      min="1"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="w-20 bg-[#03091a] border border-blue-500 rounded-lg px-3 py-2 text-white text-right"
+                      autoFocus
+                    />
+                    <span className="text-blue-300/60 text-sm">h</span>
+                    <button
+                      onClick={() => handleSave(config.chave)}
+                      disabled={saving}
+                      className="p-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors cursor-pointer"
+                    >
+                      {saving ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Save className="w-4 h-4 text-white" />}
+                    </button>
+                    <button
+                      onClick={() => setEditing(null)}
+                      className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <X className="w-4 h-4 text-red-400" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3 shrink-0">
+                    <Clock className="w-4 h-4 text-blue-400/60" />
+                    <span className="text-2xl font-black text-yellow-400">{config.valor}h</span>
+                    <button
+                      onClick={() => handleEdit(config.chave, config.valor)}
+                      className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Pencil className="w-4 h-4 text-blue-400" />
+                    </button>
+                  </div>
+                )
+              )}
+
+              {/* PRICE input */}
+              {type === 'price' && (
+                editing === config.chave ? (
+                  <div className="flex items-center gap-2 shrink-0">
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="w-24 bg-[#03091a] border border-blue-500 rounded-lg px-3 py-2 text-white text-right"
+                      autoFocus
+                    />
+                    <span className="text-white">€</span>
+                    <button
+                      onClick={() => handleSave(config.chave)}
+                      disabled={saving}
+                      className="p-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors cursor-pointer"
+                    >
+                      {saving ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Save className="w-4 h-4 text-white" />}
+                    </button>
+                    <button
+                      onClick={() => setEditing(null)}
+                      className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <X className="w-4 h-4 text-red-400" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className="text-2xl font-black text-yellow-400">{parseFloat(config.valor).toFixed(2)}€</span>
+                    <button
+                      onClick={() => handleEdit(config.chave, config.valor)}
+                      className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <Pencil className="w-4 h-4 text-blue-400" />
+                    </button>
+                  </div>
+                )
+              )}
             </div>
-            
-            {editing === config.chave ? (
-              <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  className="w-24 bg-[#03091a] border border-blue-500 rounded-lg px-3 py-2 text-white text-right"
-                  autoFocus
-                />
-                <span className="text-white">€</span>
-                <button
-                  onClick={() => handleSave(config.chave)}
-                  disabled={saving}
-                  className="p-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors cursor-pointer"
-                >
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Save className="w-4 h-4 text-white" />}
-                </button>
-                <button
-                  onClick={() => setEditing(null)}
-                  className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors cursor-pointer"
-                >
-                  <X className="w-4 h-4 text-red-400" />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <span className="text-2xl font-black text-yellow-400">{parseFloat(config.valor).toFixed(2)}€</span>
-                <button
-                  onClick={() => handleEdit(config.chave, config.valor)}
-                  className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-colors cursor-pointer"
-                >
-                  <Pencil className="w-4 h-4 text-blue-400" />
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

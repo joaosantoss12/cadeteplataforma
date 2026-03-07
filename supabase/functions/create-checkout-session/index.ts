@@ -41,11 +41,12 @@ Deno.serve(async (req: Request) => {
       throw new Error('Utilizador não autenticado.');
     }
 
-    const { priceId, priceData, mode, plan } = await req.json() as {
+    const { priceId, priceData, mode, plan, analise_premium_id } = await req.json() as {
       priceId?: string;
       priceData?: { amount: number; name: string; currency?: string };
       mode: 'subscription' | 'payment';
       plan: string;
+      analise_premium_id?: number;
     };
 
     if (!priceId && !priceData) {
@@ -77,6 +78,12 @@ Deno.serve(async (req: Request) => {
 
     const origin = req.headers.get('origin') || 'http://localhost:5173';
 
+    const successUrlMap: Record<string, string> = {
+      analise_premium: `${origin}/analise-premium?payment=success&plan=analise_premium`,
+      desafios: `${origin}/desafios?payment=success&plan=desafios`,
+    };
+    const successUrl = successUrlMap[plan] ?? `${origin}/dashboard?payment=success&plan=${plan}`;
+
     const lineItem = priceId
       ? { price: priceId, quantity: 1 }
       : {
@@ -94,9 +101,13 @@ Deno.serve(async (req: Request) => {
       mode,
       // MB Way only supports one-time payments (not recurring subscriptions)
       payment_method_types: mode === 'payment' ? ['card', 'mb_way', 'revolut_pay'] : ['card'],
-      success_url: `${origin}/dashboard?payment=success&plan=${plan}`,
+      success_url: successUrl,
       cancel_url: `${origin}/desafios`,
-      metadata: { supabase_user_id: user.id, plan },
+      metadata: {
+        supabase_user_id: user.id,
+        plan,
+        ...(analise_premium_id !== undefined ? { analise_premium_id: String(analise_premium_id) } : {}),
+      },
     });
 
     return new Response(
