@@ -17,7 +17,7 @@ import type { AnalisePremium as AnalisePremiumType } from '../types/database';
 
 export default function AnalisePremium() {
   const { getConfiguracao, loading: configLoading } = useConfiguracoes();
-  const precoAnalise = getConfiguracao('preco_analise_premium') || '5.00';
+  //const precoAnalise = getConfiguracao('preco_analise_premium') || '5.00';
   const ativa = getConfiguracao('analise_premium_ativa') !== 'false';
   const horasReset = parseInt(getConfiguracao('horas_reset_analise_premium') || '24', 10);
 
