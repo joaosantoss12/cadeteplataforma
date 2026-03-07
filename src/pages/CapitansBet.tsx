@@ -307,7 +307,7 @@ export default function CapitansBet() {
                     {/* Botão Jogar - Aparece ao hover */}
                     <div className="absolute inset-0 flex items-center justify-center bg-[#081533]/95 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-xl">
                       <a 
-                        href="https://t.me/cadetesuport"
+                        href="https://captainspartners.com/processing/click?btag=17471_20645"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm py-2 px-6 rounded-lg shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all transform hover:scale-105 uppercase tracking-wide"
