@@ -35,25 +35,27 @@ export default function AnalisePremium() {
   const checkAll = async (currentHorasReset: number) => {
     setLoadingData(true);
 
-    const { data: analiseData } = await supabase
+    const { data: analiseRaw } = await supabase
       .from('analise_premium')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle();
 
-    setAnalise(analiseData as AnalisePremiumType | null);
+    const analiseData = analiseRaw as AnalisePremiumType | null;
+    setAnalise(analiseData);
 
     if (analiseData) {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data: compra } = await supabase
+        const { data: compraRaw } = await supabase
           .from('compras_premium')
           .select('data_compra')
           .eq('user_id', user.id)
           .eq('analise_premium_id', analiseData.id)
           .maybeSingle();
 
+        const compra = compraRaw as { data_compra: string } | null;
         if (compra) {
           const expiresAt = new Date(
             new Date(compra.data_compra).getTime() + currentHorasReset * 60 * 60 * 1000,
