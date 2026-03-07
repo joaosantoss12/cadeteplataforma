@@ -91,7 +91,7 @@ export default function AnalisePremium() {
   const handleComprar = () => {
     if (!analise) return;
     startCheckout(
-      { amount: parseFloat(precoAnalise), name: `Análise Premium — ${analise.jogo}` },
+      { amount: analise.preco, name: `Análise Premium — ${analise.jogo}` },
       'payment',
       'analise_premium',
       analise.id,
@@ -226,7 +226,7 @@ export default function AnalisePremium() {
               <div className="bg-gradient-to-r from-[#0a1b42] to-[#081533] border border-blue-500/30 rounded-2xl p-6 inline-block">
                 <p className="text-sm text-blue-400/80 uppercase tracking-widest mb-2">Pagamento Único</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-white">{parseFloat(precoAnalise).toFixed(2)}€</span>
+                  <span className="text-5xl font-black text-white">{analise.preco.toFixed(2)}€</span>
                   <span className="text-blue-400/60 font-medium text-xl">/análise</span>
                 </div>
               </div>
