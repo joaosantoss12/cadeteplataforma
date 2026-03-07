@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import DashboardLayout from './layouts/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
@@ -14,6 +14,24 @@ import Login from './pages/Login';
 import Registo from './pages/Registo';
 import Termos from './pages/Termos';
 import Privacidade from './pages/Privacidade';
+
+// Redirects old /dashboard?payment=success&plan=X to the correct page
+function DashboardPaymentRedirect() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const plan = params.get('plan');
+  const payment = params.get('payment');
+
+  if (payment === 'success') {
+    if (plan === 'analise_premium') {
+      return <Navigate to={`/analise-premium?payment=success&plan=analise_premium`} replace />;
+    }
+    if (plan === 'desafios') {
+      return <Navigate to={`/desafios?payment=success&plan=desafios`} replace />;
+    }
+  }
+  return <Navigate to="/inicio" replace />;
+}
  
 function App() {
   return (
@@ -21,6 +39,8 @@ function App() {
       <Routes>
         {/* Redirect raiz para início */}
         <Route path="/" element={<Navigate to="/inicio" replace />} />
+        {/* Legacy Stripe redirect fallback */}
+        <Route path="/dashboard" element={<DashboardPaymentRedirect />} />
         
         {/* Páginas de Autenticação */}
         <Route path="/login" element={<Login />} />
