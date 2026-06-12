@@ -13,7 +13,7 @@ import Admin from './pages/Admin';
 import Login from './pages/Login';
 import Registo from './pages/Registo';
 import Termos from './pages/Termos';
-import Privacidade from './pages/Privacidade';
+import Privacidade from './pages/Privacidade'; 
 
 // Redirects old /dashboard?payment=success&plan=X to the correct page
 function DashboardPaymentRedirect() {
