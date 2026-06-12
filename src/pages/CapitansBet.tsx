@@ -37,52 +37,52 @@ const generateInitial = () => {
 
 // Nomes de slots populares e suas imagens
 const slotData = [
-  { 
-    name: 'Sweet Bonanza', 
+  {
+    name: 'Le Bandit',
     image: '/1.jpg'
   },
-  { 
-    name: 'Gates of Olympus', 
+  {
+    name: 'Dork Unit',
     image: '/5.jpg'
   },
-  { 
-    name: 'Sugar Rush', 
+  {
+    name: 'Wanted Dead or a Wild',
     image: '/8.jpg'
   },
-  { 
-    name: 'Big Bass Bonanza', 
+  {
+    name: 'Le Santa',
     image: '/12.jpg'
   },
-  { 
-    name: 'Starlight Princess', 
+  {
+    name: 'Pray for Three',
     image: '/15.jpg'
   },
-  { 
-    name: 'The Dog House', 
+  {
+    name: 'Le Pharaoh',
     image: '/18.jpg'
   },
-  { 
-    name: 'Wolf Gold', 
+  {
+    name: 'Donny Dough',
     image: '/20.jpg'
   },
-  { 
-    name: 'Lucky Tiger Gold', 
+  {
+    name: 'Benny the Beer',
     image: '/22.jpg'
   },
-  { 
-    name: 'Fire Joker', 
+  {
+    name: 'Sweet Bonanza Super Scatter',
     image: '/25.png'
   },
-  { 
-    name: 'Wild Wild Riches', 
+  {
+    name: 'Cyber Heist City',
     image: '/28.png'
   },
-  { 
-    name: 'Buffalo King', 
+  {
+    name: 'Starlight Princess Super Scatter',
     image: '/30.png'
   },
-  { 
-    name: 'Fruit Party', 
+  {
+    name: 'Sweet Rush Bonanza',
     image: '/31.png'
   }
 ];
@@ -147,7 +147,81 @@ export default function CapitansBet() {
   }, []);
   return (
     <div className="space-y-12 animate-in fade-in duration-500 pb-16">
-      
+
+      {/* Vencedores Recentes - Scroll Horizontal Automático (JS-driven para fluxo contínuo) */}
+      <div className="pb-8 border-b border-blue-900/30">
+        <h3 className="text-xl font-bold text-white text-center mb-6 flex items-center justify-center gap-2">
+          <span className="text-2xl">🎰</span>
+          Vencedores Recentes
+        </h3>
+
+        <div className="relative overflow-hidden">
+          {/* Gradientes nas bordas */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#03091a] to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#03091a] to-transparent z-10 pointer-events-none"></div>
+
+          <div className="w-full overflow-hidden">
+            <div
+              ref={trackRef}
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
+              className="flex gap-4 will-change-transform"
+            >
+              {/* Duplica os vencedores para efeito de scroll infinito */}
+              {[...winners, ...winners].map((winner, index) => (
+                <div
+                  key={index}
+                  className="group flex-shrink-0 w-64 bg-[#081533] border border-blue-900/40 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all relative cursor-pointer"
+                >
+                  {/* Imagem da Slot */}
+                  <div className="relative h-32 overflow-hidden">
+                    <img
+                      src={winner.image}
+                      alt={winner.slot}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://via.placeholder.com/339x180/081533/3B82F6?text=Slot+Game';
+                      }}
+                    />
+                    {/* Overlay gradiente */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#081533] via-[#081533]/60 to-transparent"></div>
+                  </div>
+
+                  <div className="relative z-10 p-3 text-center space-y-2">
+                    {/* Inicial e Nome */}
+                    <div className="flex items-center justify-between">
+                      <div className="text-lg font-black text-blue-400">
+                        {winner.initial}
+                        <span className="text-blue-900/50 text-sm">******</span>
+                      </div>
+                      <p className="text-xs text-blue-300/60 font-medium">{winner.slot}</p>
+                    </div>
+
+                    {/* Valor Ganho */}
+                    <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 rounded-lg py-2 px-3">
+                      <p className="text-xs text-blue-400/80 uppercase tracking-wider mb-1">Ganhou</p>
+                      <p className="text-lg font-black text-blue-400">€{winner.amount}</p>
+                    </div>
+
+                    {/* Botão Jogar - Aparece ao hover */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-[#081533]/95 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-xl">
+                      <a
+                        href="https://captainspartners.com/processing/click?btag=17471_20645"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm py-2 px-6 rounded-lg shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all transform hover:scale-105 uppercase tracking-wide"
+                      >
+                        Jogar
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 rounded-3xl p-1 shadow-[0_0_40px_rgba(37,99,235,0.4)]">
         <div className="bg-[#03091a] rounded-[22px] p-8 md:p-16 relative overflow-hidden">
@@ -246,80 +320,6 @@ export default function CapitansBet() {
             </div>
           </div>
 
-        </div>
-      </div>
-
-      {/* Rodapé com Vencedores Recentes - Scroll Horizontal Automático (JS-driven para fluxo contínuo) */}
-      <div className="mt-12 pt-8 border-t border-blue-900/30">
-        <h3 className="text-xl font-bold text-white text-center mb-6 flex items-center justify-center gap-2">
-          <span className="text-2xl">🎰</span>
-          Vencedores Recentes
-        </h3>
-
-        <div className="relative overflow-hidden">
-          {/* Gradientes nas bordas */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#03091a] to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#03091a] to-transparent z-10 pointer-events-none"></div>
-
-          <div className="w-full overflow-hidden">
-            <div
-              ref={trackRef}
-              onMouseEnter={() => setIsPaused(true)}
-              onMouseLeave={() => setIsPaused(false)}
-              className="flex gap-4 will-change-transform"
-            >
-              {/* Duplica os vencedores para efeito de scroll infinito */}
-              {[...winners, ...winners].map((winner, index) => (
-                <div 
-                  key={index}
-                  className="group flex-shrink-0 w-64 bg-[#081533] border border-blue-900/40 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all relative cursor-pointer"
-                >
-                  {/* Imagem da Slot */}
-                  <div className="relative h-32 overflow-hidden">
-                    <img 
-                      src={winner.image} 
-                      alt={winner.slot}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://via.placeholder.com/339x180/081533/3B82F6?text=Slot+Game';
-                      }}
-                    />
-                    {/* Overlay gradiente */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#081533] via-[#081533]/60 to-transparent"></div>
-                  </div>
-                  
-                  <div className="relative z-10 p-3 text-center space-y-2">
-                    {/* Inicial e Nome */}
-                    <div className="flex items-center justify-between">
-                      <div className="text-lg font-black text-blue-400">
-                        {winner.initial}
-                        <span className="text-blue-900/50 text-sm">******</span>
-                      </div>
-                      <p className="text-xs text-blue-300/60 font-medium">{winner.slot}</p>
-                    </div>
-                    
-                    {/* Valor Ganho */}
-                    <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border border-blue-500/30 rounded-lg py-2 px-3">
-                      <p className="text-xs text-blue-400/80 uppercase tracking-wider mb-1">Ganhou</p>
-                      <p className="text-lg font-black text-blue-400">€{winner.amount}</p>
-                    </div>
-
-                    {/* Botão Jogar - Aparece ao hover */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#081533]/95 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-xl">
-                      <a 
-                        href="https://captainspartners.com/processing/click?btag=17471_20645"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm py-2 px-6 rounded-lg shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all transform hover:scale-105 uppercase tracking-wide"
-                      >
-                        Jogar
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 
