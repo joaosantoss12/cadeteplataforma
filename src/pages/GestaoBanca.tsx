@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { 
-  Wallet, TrendingUp, LineChart as LineChartIcon, Plus, CalendarDays, X, Calendar, Trophy, Target, Receipt, Loader2, Settings
+  Wallet, TrendingUp, LineChart as LineChartIcon, Plus, CalendarDays, X, Calendar, Trophy, Target, Receipt, Loader2, Settings, RotateCcw
 } from 'lucide-react';
 import { 
   BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell 
@@ -74,7 +74,7 @@ export default function GestaoBanca() {
     valor: '',
     odd: ''
   });
-  const [resultadoAposta, setResultadoAposta] = useState<'ganha' | 'perdida' | null>(null);
+  const [resultadoAposta, setResultadoAposta] = useState<'ganha' | 'perdida' | 'devolvida' | null>(null);
   
   // Estado para controlar o nível de visualização dos gráficos
   const [nivelGrafico, setNivelGrafico] = useState<'anual' | 'mensal' | 'diario'>('anual');
@@ -93,7 +93,11 @@ export default function GestaoBanca() {
     const odd = parseFloat(formData.odd);
     
     // Calcular retorno baseado no resultado
-    const retorno = resultadoAposta === 'ganha' ? valor * odd : 0;
+    // ganha: stake * odd | devolvida (anulada): stake devolvido (lucro 0) | perdida: 0
+    const retorno =
+      resultadoAposta === 'ganha' ? valor * odd
+      : resultadoAposta === 'devolvida' ? valor
+      : 0;
     
     await addAposta({
       data: formData.data,
@@ -115,8 +119,10 @@ export default function GestaoBanca() {
 
   const lucroTotal = apostas.reduce((soma, aposta) => soma + (Number(aposta.retorno) - Number(aposta.valor)), 0);
   const bancaAtual = bancaInicial + lucroTotal;
-  const taxaAcerto = apostas.length > 0
-    ? (apostas.filter((aposta) => (Number(aposta.retorno) - Number(aposta.valor)) > 0).length / apostas.length) * 100
+  // Apostas devolvidas (retorno === valor, lucro 0) não contam para a taxa de acerto
+  const apostasResolvidas = apostas.filter((aposta) => Number(aposta.retorno) !== Number(aposta.valor));
+  const taxaAcerto = apostasResolvidas.length > 0
+    ? (apostasResolvidas.filter((aposta) => (Number(aposta.retorno) - Number(aposta.valor)) > 0).length / apostasResolvidas.length) * 100
     : 0;
   
   // Show loading state
@@ -639,38 +645,56 @@ export default function GestaoBanca() {
               {/* Resultado da Aposta */}
               <div>
                 <label className="block text-sm font-bold text-blue-300/70 uppercase tracking-widest mb-2">Resultado</label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <button
                     type="button"
                     onClick={() => setResultadoAposta('ganha')}
-                    className={`py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                    className={`py-3 px-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
                       resultadoAposta === 'ganha'
                         ? 'bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)]'
                         : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
                     } cursor-pointer`}
                   >
                     <Trophy className="w-5 h-5" />
-                    Aposta Ganha
+                    Ganha
                   </button>
                   <button
                     type="button"
                     onClick={() => setResultadoAposta('perdida')}
-                    className={`py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                    className={`py-3 px-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
                       resultadoAposta === 'perdida'
                         ? 'bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.4)]'
                         : 'bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20'
                     } cursor-pointer`}
                   >
                     <X className="w-5 h-5" />
-                    Aposta Perdida
+                    Perdida
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setResultadoAposta('devolvida')}
+                    className={`py-3 px-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                      resultadoAposta === 'devolvida'
+                        ? 'bg-slate-400 text-[#03091a] shadow-[0_0_20px_rgba(148,163,184,0.4)]'
+                        : 'bg-slate-400/10 border border-slate-400/30 text-slate-300 hover:bg-slate-400/20'
+                    } cursor-pointer`}
+                  >
+                    <RotateCcw className="w-5 h-5" />
+                    Devolvida
                   </button>
                 </div>
                 {resultadoAposta && formData.valor && formData.odd && (
                   <p className="text-sm mt-3 text-center">
                     <span className="text-blue-300/70">Profit: </span>
-                    <span className={`font-bold ${resultadoAposta === 'ganha' ? 'text-emerald-400' : 'text-red-400'}`}>
-                      {resultadoAposta === 'ganha' 
+                    <span className={`font-bold ${
+                      resultadoAposta === 'ganha' ? 'text-emerald-400'
+                      : resultadoAposta === 'devolvida' ? 'text-slate-300'
+                      : 'text-red-400'
+                    }`}>
+                      {resultadoAposta === 'ganha'
                         ? `+${((parseFloat(formData.valor) * parseFloat(formData.odd)) - parseFloat(formData.valor)).toFixed(2)}€`
+                        : resultadoAposta === 'devolvida'
+                        ? '0.00€'
                         : `-${parseFloat(formData.valor).toFixed(2)}€`
                       }
                     </span>
