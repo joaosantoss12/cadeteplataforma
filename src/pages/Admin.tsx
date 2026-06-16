@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { 
-  Shield, Settings, Calendar, Trophy, MapPin, Plus, Pencil, Trash2, X, Save, Loader2, Euro, ToggleLeft, ToggleRight, Clock
+  Shield, Settings, Calendar, Trophy, Plus, Pencil, Trash2, X, Save, Loader2, Euro, ToggleLeft, ToggleRight, Clock
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  useAdminEstadios, 
-  useAdminAnalisesDia, 
-  useAdminAnalisesPremium, 
-  useConfiguracoes 
+import {
+  useAdminAnalisesDia,
+  useAdminAnalisesPremium,
+  useConfiguracoes
 } from '../hooks/useAdmin';
-import type { Estadio, AnaliseDia, AnalisePremium } from '../types/database';
+import type { AnaliseDia, AnalisePremium } from '../types/database';
+import { formatData } from '../utils/format';
 
-type TabType = 'configuracoes' | 'analises-dia' | 'analises-premium' | 'estadios';
+type TabType = 'configuracoes' | 'analises-dia' | 'analises-premium';
 
 export default function Admin() {
   const { isAdmin } = useAuth();
@@ -33,7 +33,6 @@ export default function Admin() {
     { id: 'configuracoes' as TabType, label: 'Configurações', icon: Settings },
     { id: 'analises-dia' as TabType, label: 'Análises do Dia', icon: Calendar },
     { id: 'analises-premium' as TabType, label: 'Análises Premium', icon: Trophy },
-    { id: 'estadios' as TabType, label: 'Estádios', icon: MapPin },
   ];
 
   return (
@@ -75,7 +74,6 @@ export default function Admin() {
         {activeTab === 'configuracoes' && <ConfiguracoesTab />}
         {activeTab === 'analises-dia' && <AnalisesDiaTab />}
         {activeTab === 'analises-premium' && <AnalisesPremiumTab />}
-        {activeTab === 'estadios' && <EstadiosTab />}
       </div>
     </div>
   );
@@ -107,11 +105,18 @@ function ConfiguracoesTab() {
     setToggling(null);
   };
 
-  const configMeta: Record<string, { label: string; type: 'price' | 'hours' | 'toggle'; description?: string }> = {
+  const handleTimeSave = async (chave: string, valor: string) => {
+    if (!valor) return;
+    setToggling(chave);
+    await updateConfiguracao(chave, valor);
+    setToggling(null);
+  };
+
+  const configMeta: Record<string, { label: string; type: 'price' | 'hours' | 'time' | 'toggle'; description?: string }> = {
     'preco_analise_premium': { label: 'Preço Análise Premium', type: 'price' },
     'preco_grupo_desafios': { label: 'Preço Grupo Desafios', type: 'price' },
     'analise_premium_ativa': { label: 'Análise Premium Ativa', type: 'toggle', description: 'Liga/desliga a disponibilidade da análise premium para utilizadores' },
-    'horas_reset_analise_premium': { label: 'Horas de Acesso (Premium)', type: 'hours', description: 'Quantas horas o utilizador tem acesso após comprar a análise' },
+    'horas_reset_analise_premium': { label: 'Hora Limite de Compra (Premium)', type: 'time', description: 'Até que hora (Portugal) os utilizadores podem comprar a análise premium' },
   };
 
   if (loading) {
@@ -130,7 +135,9 @@ function ConfiguracoesTab() {
       </h2>
       
       <div className="grid gap-4">
-        {configuracoes.map((config) => {
+        {configuracoes
+          .filter((config) => !config.chave.startsWith('stripe_'))
+          .map((config) => {
           const meta = configMeta[config.chave];
           const type = meta?.type ?? 'price';
 
@@ -204,6 +211,40 @@ function ConfiguracoesTab() {
                   </div>
                 )
               )}
+
+              {/* TIME (hora limite) — dropdowns de hora e minutos, guarda ao escolher */}
+              {type === 'time' && (() => {
+                const pad = (n: number) => n.toString().padStart(2, '0');
+                const [hh = '18', mm = '00'] = (config.valor || '18:00').split(':');
+                const selectClass = "bg-[#03091a] border border-blue-900/50 rounded-lg px-3 py-2 text-white text-lg font-bold cursor-pointer focus:border-blue-500 outline-none disabled:opacity-60";
+                return (
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Clock className="w-5 h-5 text-blue-400/60" />
+                    <select
+                      value={hh}
+                      onChange={(e) => handleTimeSave(config.chave, `${e.target.value}:${mm}`)}
+                      disabled={toggling === config.chave}
+                      className={selectClass}
+                    >
+                      {Array.from({ length: 24 }, (_, i) => pad(i)).map(h => (
+                        <option key={h} value={h}>{h}</option>
+                      ))}
+                    </select>
+                    <span className="text-white text-lg font-bold">:</span>
+                    <select
+                      value={mm}
+                      onChange={(e) => handleTimeSave(config.chave, `${hh}:${e.target.value}`)}
+                      disabled={toggling === config.chave}
+                      className={selectClass}
+                    >
+                      {Array.from({ length: 60 }, (_, i) => pad(i)).map(m => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
+                    {toggling === config.chave && <Loader2 className="w-4 h-4 animate-spin text-blue-400" />}
+                  </div>
+                );
+              })()}
 
               {/* PRICE input */}
               {type === 'price' && (
@@ -513,7 +554,7 @@ function AnalisesDiaTab() {
           <tbody>
             {analises.map((analise) => (
               <tr key={analise.id} className="border-b border-blue-900/20 hover:bg-blue-900/10">
-                <td className="py-3 px-4 text-white">{analise.data}</td>
+                <td className="py-3 px-4 text-white">{formatData(analise.data)}</td>
                 <td className="py-3 px-4 text-blue-300">{analise.liga}</td>
                 <td className="py-3 px-4 text-white">{analise.jogo}</td>
                 <td className="py-3 px-4 text-indigo-400">{analise.aposta}</td>
@@ -558,6 +599,8 @@ function AnalisesDiaTab() {
 // ==================== ANÁLISES PREMIUM TAB ====================
 function AnalisesPremiumTab() {
   const { analises, loading, addAnalise, updateAnalise, deleteAnalise } = useAdminAnalisesPremium();
+  const { getConfiguracao, updateConfiguracao, loading: configLoading } = useConfiguracoes();
+  const precoGlobal = parseFloat(getConfiguracao('preco_analise_premium') || '5.00');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
@@ -573,7 +616,7 @@ function AnalisesPremiumTab() {
     analise_estatisticas_fora: '',
     analise_conclusao: '',
     resultado: 'pendente',
-    preco: 5.00
+    preco: precoGlobal
   });
 
   const resetForm = () => {
@@ -589,14 +632,15 @@ function AnalisesPremiumTab() {
       analise_estatisticas_fora: '',
       analise_conclusao: '',
       resultado: 'pendente',
-      preco: 5.00
+      preco: precoGlobal
     });
     setEditingId(null);
     setShowForm(false);
   };
 
   const handleEdit = (analise: AnalisePremium) => {
-    setFormData(analise);
+    // O preço é global, por isso usamos sempre o valor da configuração.
+    setFormData({ ...analise, preco: precoGlobal });
     setEditingId(analise.id);
     setShowForm(true);
   };
@@ -604,13 +648,20 @@ function AnalisesPremiumTab() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    
+
+    const preco = formData.preco ?? precoGlobal;
+
     if (editingId) {
-      await updateAnalise(editingId, formData);
+      await updateAnalise(editingId, { ...formData, preco });
     } else {
-      await addAnalise(formData as Omit<AnalisePremium, 'id' | 'created_at'>);
+      await addAnalise({ ...formData, preco } as Omit<AnalisePremium, 'id' | 'created_at'>);
     }
-    
+
+    // Mantém o preço global sincronizado (Configurações ↔ Análises Premium).
+    if (!Number.isNaN(preco)) {
+      await updateConfiguracao('preco_analise_premium', String(preco));
+    }
+
     resetForm();
     setSaving(false);
   };
@@ -621,7 +672,7 @@ function AnalisesPremiumTab() {
     }
   };
 
-  if (loading) {
+  if (loading || configLoading) {
     return (
       <div className="flex items-center justify-center h-48">
         <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
@@ -681,7 +732,7 @@ function AnalisesPremiumTab() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-blue-300/70 mb-2">Preço (€)</label>
+                  <label className="block text-sm font-bold text-blue-300/70 mb-2">Preço global (€)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -690,6 +741,7 @@ function AnalisesPremiumTab() {
                     required
                     className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
                   />
+                  <p className="text-xs text-blue-300/50 mt-1">Aplica-se a todas as análises premium e sincroniza com as Configurações.</p>
                 </div>
               </div>
               <div>
@@ -830,12 +882,12 @@ function AnalisesPremiumTab() {
           <tbody>
             {analises.map((analise) => (
               <tr key={analise.id} className="border-b border-blue-900/20 hover:bg-blue-900/10">
-                <td className="py-3 px-4 text-white">{analise.data}</td>
+                <td className="py-3 px-4 text-white">{formatData(analise.data)}</td>
                 <td className="py-3 px-4 text-blue-300">{analise.liga}</td>
                 <td className="py-3 px-4 text-white">{analise.jogo}</td>
                 <td className="py-3 px-4 text-indigo-400">{analise.aposta}</td>
                 <td className="py-3 px-4 text-yellow-400 font-bold">{analise.odd}</td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">{analise.preco}€</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">{precoGlobal.toFixed(2)}€</td>
                 <td className="py-3 px-4">
                   <span className={`px-2 py-1 rounded-full text-xs font-bold ${
                     analise.resultado === 'green' ? 'bg-emerald-500/20 text-emerald-400' :
@@ -867,294 +919,6 @@ function AnalisesPremiumTab() {
         </table>
         {analises.length === 0 && (
           <p className="text-center text-blue-300/50 py-8">Nenhuma análise premium encontrada.</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// ==================== ESTÁDIOS TAB ====================
-function EstadiosTab() {
-  const { estadios, loading, addEstadio, updateEstadio, deleteEstadio } = useAdminEstadios();
-  const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [formData, setFormData] = useState<Partial<Estadio>>({
-    nome: '',
-    localizacao: '',
-    capacidade: '',
-    inauguracao: '',
-    facto: '',
-    instagram_link: '',
-    instagram_post_url: '',
-    data_visita: null,
-    imagem_bg: 'from-blue-600/20 to-[#081533]',
-    icon_color: 'text-blue-500'
-  });
-
-  const resetForm = () => {
-    setFormData({
-      nome: '',
-      localizacao: '',
-      capacidade: '',
-      inauguracao: '',
-      facto: '',
-      instagram_link: '',
-      instagram_post_url: '',
-      data_visita: null,
-      imagem_bg: 'from-blue-600/20 to-[#081533]',
-      icon_color: 'text-blue-500'
-    });
-    setEditingId(null);
-    setShowForm(false);
-  };
-
-  const handleEdit = (estadio: Estadio) => {
-    setFormData(estadio);
-    setEditingId(estadio.id);
-    setShowForm(true);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    
-    if (editingId) {
-      await updateEstadio(editingId, formData);
-    } else {
-      await addEstadio(formData as Omit<Estadio, 'id' | 'created_at'>);
-    }
-    
-    resetForm();
-    setSaving(false);
-  };
-
-  const handleDelete = async (id: number) => {
-    if (confirm('Tens a certeza que queres apagar este estádio?')) {
-      await deleteEstadio(id);
-    }
-  };
-
-  const colorOptions = [
-    { value: 'from-blue-600/20 to-[#081533]', label: 'Azul', iconColor: 'text-blue-500' },
-    { value: 'from-red-600/20 to-[#081533]', label: 'Vermelho', iconColor: 'text-red-500' },
-    { value: 'from-green-600/20 to-[#081533]', label: 'Verde', iconColor: 'text-green-500' },
-    { value: 'from-yellow-600/20 to-[#081533]', label: 'Amarelo', iconColor: 'text-yellow-500' },
-    { value: 'from-purple-600/20 to-[#081533]', label: 'Roxo', iconColor: 'text-purple-500' },
-    { value: 'from-slate-400/20 to-[#081533]', label: 'Cinza', iconColor: 'text-slate-300' },
-  ];
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-48">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-emerald-400" />
-          Estádios ({estadios.length})
-        </h2>
-        <button
-          onClick={() => setShowForm(true)}
-          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2 cursor-pointer"
-        >
-          <Plus className="w-4 h-4" /> Novo Estádio
-        </button>
-      </div>
-
-      {/* Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={resetForm} />
-          <div className="relative bg-gradient-to-br from-[#0a1b42] to-[#081533] border border-blue-800/50 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b border-blue-900/30 sticky top-0 bg-[#0a1b42]">
-              <h2 className="text-xl font-bold text-white">
-                {editingId ? 'Editar Estádio' : 'Novo Estádio'}
-              </h2>
-              <button onClick={resetForm} className="text-blue-400 hover:text-white transition-colors cursor-pointer">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-bold text-blue-300/70 mb-2">Nome</label>
-                <input
-                  type="text"
-                  value={formData.nome}
-                  onChange={(e) => setFormData(prev => ({ ...prev, nome: e.target.value }))}
-                  placeholder="Estádio da Luz"
-                  required
-                  className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-blue-300/70 mb-2">Localização</label>
-                  <input
-                    type="text"
-                    value={formData.localizacao}
-                    onChange={(e) => setFormData(prev => ({ ...prev, localizacao: e.target.value }))}
-                    placeholder="Lisboa, Portugal"
-                    required
-                    className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-blue-300/70 mb-2">Capacidade</label>
-                  <input
-                    type="text"
-                    value={formData.capacidade}
-                    onChange={(e) => setFormData(prev => ({ ...prev, capacidade: e.target.value }))}
-                    placeholder="64.642"
-                    required
-                    className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-blue-300/70 mb-2">Inauguração</label>
-                  <input
-                    type="text"
-                    value={formData.inauguracao}
-                    onChange={(e) => setFormData(prev => ({ ...prev, inauguracao: e.target.value }))}
-                    placeholder="2003"
-                    required
-                    className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-blue-300/70 mb-2">Data Visita</label>
-                  <input
-                    type="date"
-                    value={formData.data_visita || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, data_visita: e.target.value || null }))}
-                    className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-blue-300/70 mb-2">Facto Interessante</label>
-                <textarea
-                  value={formData.facto}
-                  onChange={(e) => setFormData(prev => ({ ...prev, facto: e.target.value }))}
-                  rows={3}
-                  required
-                  className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white resize-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-blue-300/70 mb-2">Link Instagram (perfil)</label>
-                <input
-                  type="url"
-                  value={formData.instagram_link}
-                  onChange={(e) => setFormData(prev => ({ ...prev, instagram_link: e.target.value }))}
-                  placeholder="https://instagram.com/..."
-                  required
-                  className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-blue-300/70 mb-2">URL do Reel Instagram (para embed)</label>
-                <input
-                  type="url"
-                  value={formData.instagram_post_url || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, instagram_post_url: e.target.value || null }))}
-                  placeholder="https://www.instagram.com/reel/XXXXXXXXX/"
-                  className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white"
-                />
-                <p className="text-blue-400/50 text-xs mt-1">Cola o link direto do Reel (formato /reel/). Opcional.</p>
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-blue-300/70 mb-2">Cor do Card</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {colorOptions.map((color) => (
-                    <button
-                      key={color.value}
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, imagem_bg: color.value, icon_color: color.iconColor }))}
-                      className={`p-3 rounded-xl border-2 transition-all cursor-pointer ${
-                        formData.imagem_bg === color.value 
-                          ? 'border-white bg-white/10' 
-                          : 'border-transparent bg-[#03091a] hover:border-blue-500/50'
-                      }`}
-                    >
-                      <div className={`w-full h-8 rounded-lg bg-gradient-to-br ${color.value}`}></div>
-                      <p className="text-white text-xs mt-1 text-center">{color.label}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="flex-1 bg-blue-900/30 hover:bg-blue-900/50 text-blue-300 font-bold py-3 px-6 rounded-xl transition-all cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2"
-                >
-                  {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                  {editingId ? 'Atualizar' : 'Guardar'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-blue-900/30">
-              <th className="text-left py-3 px-4 text-blue-300/70 font-bold text-sm">Nome</th>
-              <th className="text-left py-3 px-4 text-blue-300/70 font-bold text-sm">Localização</th>
-              <th className="text-left py-3 px-4 text-blue-300/70 font-bold text-sm">Capacidade</th>
-              <th className="text-left py-3 px-4 text-blue-300/70 font-bold text-sm">Inauguração</th>
-              <th className="text-left py-3 px-4 text-blue-300/70 font-bold text-sm">Data Visita</th>
-              <th className="text-right py-3 px-4 text-blue-300/70 font-bold text-sm">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {estadios.map((estadio) => (
-              <tr key={estadio.id} className="border-b border-blue-900/20 hover:bg-blue-900/10">
-                <td className="py-3 px-4 text-white font-bold">{estadio.nome}</td>
-                <td className="py-3 px-4 text-blue-300">{estadio.localizacao}</td>
-                <td className="py-3 px-4 text-white">{estadio.capacidade}</td>
-                <td className="py-3 px-4 text-yellow-400">{estadio.inauguracao}</td>
-                <td className="py-3 px-4 text-emerald-400">{estadio.data_visita || '—'}</td>
-                <td className="py-3 px-4 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      onClick={() => handleEdit(estadio)}
-                      className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg transition-colors cursor-pointer"
-                    >
-                      <Pencil className="w-4 h-4 text-blue-400" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(estadio.id)}
-                      className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-400" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {estadios.length === 0 && (
-          <p className="text-center text-blue-300/50 py-8">Nenhum estádio encontrado.</p>
         )}
       </div>
     </div>

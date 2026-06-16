@@ -2,8 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import DashboardLayout from './layouts/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
-import Estadios from './pages/Estadios';
-import Submundo from './pages/Submundo';
 import Desafios from './pages/Desafios';
 import AnaliseDia from './pages/AnaliseDia';
 import AnalisePremium from './pages/AnalisePremium';
@@ -55,8 +53,6 @@ function App() {
           <Route element={<DashboardLayout />}>
             <Route path="/inicio" element={<Dashboard />} />
             <Route path="/gestao" element={<GestaoBanca />} />
-            <Route path="/estadios" element={<Estadios />} />
-            <Route path="/submundo" element={<Submundo />} />
             <Route path="/desafios" element={<Desafios />} />
             <Route path="/analise-dia" element={<AnaliseDia />} />
             <Route path="/analise-premium" element={<AnalisePremium />} />

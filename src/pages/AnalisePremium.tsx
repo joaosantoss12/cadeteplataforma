@@ -6,7 +6,6 @@ import {
   Sparkles,
   CheckCircle2,
   Loader2,
-  Clock,
   AlertCircle,
   X,
   FileText,
@@ -18,25 +17,50 @@ import { useConfiguracoes } from '../hooks/useAdmin';
 import { useStripeCheckout } from '../hooks/useStripeCheckout';
 import { supabase } from '../lib/supabase';
 import type { AnalisePremium as AnalisePremiumType } from '../types/database';
+import { formatData } from '../utils/format';
+
+// Devolve a data (YYYY-MM-DD) de um momento no fuso horário de Portugal.
+function toLisbonDateString(d: Date): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Lisbon' }).format(d);
+}
+
+// Verifica se a hora atual em Portugal é anterior ao limite de compra "HH:MM".
+function isPurchaseWindowOpen(horaLimite: string): boolean {
+  const match = horaLimite.match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return true; // sem limite válido → permitir compra
+  const limitMinutes = parseInt(match[1], 10) * 60 + parseInt(match[2], 10);
+
+  const nowParts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Lisbon',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(new Date());
+  const [h, m] = nowParts.split(':').map(Number);
+  const nowMinutes = h * 60 + m;
+
+  return nowMinutes < limitMinutes;
+}
 
 export default function AnalisePremium() {
   const { getConfiguracao, loading: configLoading } = useConfiguracoes();
-  //const precoAnalise = getConfiguracao('preco_analise_premium') || '5.00';
+  const precoAnalise = parseFloat(getConfiguracao('preco_analise_premium') || '5.00');
   const ativa = getConfiguracao('analise_premium_ativa') !== 'false';
-  const horasReset = parseInt(getConfiguracao('horas_reset_analise_premium') || '24', 10);
+  // Hora limite (Portugal) até à qual é possível comprar a análise premium.
+  const horaLimite = getConfiguracao('horas_reset_analise_premium') || '23:59';
+  const compraAberta = isPurchaseWindowOpen(horaLimite);
 
   const { startCheckout, loading: checkoutLoading, error: checkoutError } = useStripeCheckout();
 
   const [analise, setAnalise] = useState<AnalisePremiumType | null>(null);
   const [loadingData, setLoadingData] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
-  const [accessExpiry, setAccessExpiry] = useState<Date | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  const checkAll = async (currentHorasReset: number) => {
+  const checkAll = async () => {
     setLoadingData(true);
 
     const { data: analiseRaw } = await supabase
@@ -61,16 +85,10 @@ export default function AnalisePremium() {
 
         const compra = compraRaw as { data_compra: string } | null;
         if (compra) {
-          const expiresAt = new Date(
-            new Date(compra.data_compra).getTime() + currentHorasReset * 60 * 60 * 1000,
-          );
-          if (new Date() < expiresAt) {
-            setHasAccess(true);
-            setAccessExpiry(expiresAt);
-          } else {
-            setHasAccess(false);
-            setAccessExpiry(null);
-          }
+          // Só dá acesso se a compra foi feita no mesmo dia (dia/mês/ano) da aposta premium.
+          const diaCompra = toLisbonDateString(new Date(compra.data_compra));
+          const diaAposta = (analiseData.data || '').slice(0, 10);
+          if (diaCompra === diaAposta) setHasAccess(true);
         }
       }
     }
@@ -79,8 +97,8 @@ export default function AnalisePremium() {
   };
 
   useEffect(() => {
-    if (!configLoading) checkAll(horasReset);
-  }, [configLoading, horasReset]);
+    if (!configLoading) checkAll();
+  }, [configLoading]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -88,14 +106,14 @@ export default function AnalisePremium() {
       setShowModal(true);
       navigate('/analise-premium', { replace: true });
       // Re-check access after a short delay to allow the webhook to process
-      setTimeout(() => checkAll(horasReset), 3000);
+      setTimeout(() => checkAll(), 3000);
     }
   }, [location.search]);
 
   const handleComprar = () => {
-    if (!analise) return;
+    if (!analise || !compraAberta) return;
     startCheckout(
-      { amount: analise.preco, name: `Análise Premium — ${analise.jogo}` },
+      { amount: precoAnalise, name: 'Serviço Premium' },
       'payment',
       'analise_premium',
       analise.id,
@@ -140,13 +158,11 @@ export default function AnalisePremium() {
         {showModal && <SuccessModal onClose={() => setShowModal(false)} />}
         <PageHeader analise={analise} />
 
-        {/* Access countdown */}
-        {accessExpiry && (
-          <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-5 py-3 text-emerald-400 text-sm font-medium">
-            <Clock className="w-4 h-4 shrink-0" />
-            <span>Acesso ativo até {accessExpiry.toLocaleString('pt-PT')}</span>
-          </div>
-        )}
+        {/* Acesso ativo */}
+        <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-5 py-3 text-emerald-400 text-sm font-medium">
+          <CheckCircle2 className="w-4 h-4 shrink-0" />
+          <span>Acesso ativo — esta análise está desbloqueada para ti.</span>
+        </div>
 
         {/* Card Principal */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-1 shadow-[0_0_30px_rgba(37,99,235,0.2)]">
@@ -164,7 +180,7 @@ export default function AnalisePremium() {
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black text-white mb-3">{analise.jogo}</h2>
                 <p className="text-blue-200/60 text-lg">
-                  {analise.data} às {analise.hora}
+                  {formatData(analise.data)} às {analise.hora}
                 </p>
               </div>
 
@@ -252,7 +268,12 @@ export default function AnalisePremium() {
             <div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-4">Conteúdo Premium Bloqueado</h2>
               <p className="text-blue-200/70 text-lg">
-                Acede à análise mais profunda e rentável do Cadete. Pagamento único para acesso durante {horasReset}h.
+                Acede à análise mais profunda e rentável do Cadete. Pagamento único com acesso permanente.
+              </p>
+              <p className={`mt-3 text-sm font-bold ${compraAberta ? 'text-blue-300/80' : 'text-red-400'}`}>
+                {compraAberta
+                  ? `Disponível para compra até às ${horaLimite} (hora de Portugal).`
+                  : `Compras encerradas — o limite era às ${horaLimite} (hora de Portugal).`}
               </p>
             </div>
 
@@ -263,7 +284,7 @@ export default function AnalisePremium() {
                   'Análise completa de um jogo premium com odd mínima de @1.60',
                   'Estatísticas avançadas e modelos preditivos exclusivos',
                   'Histórico de acertos superior a 75% nos últimos 6 meses',
-                  `Acesso à análise por ${horasReset} horas após a compra`,
+                  'Acesso permanente à análise após a compra',
                   'Estratégia de aposta e gestão de banca incluída',
                   'Suporte via Telegram para esclarecimento de dúvidas',
                 ].map((benefit, i) => (
@@ -279,20 +300,22 @@ export default function AnalisePremium() {
               <div className="bg-gradient-to-r from-[#0a1b42] to-[#081533] border border-blue-500/30 rounded-2xl p-6 inline-block">
                 <p className="text-sm text-blue-400/80 uppercase tracking-widest mb-2">Pagamento Único</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-white">{analise.preco.toFixed(2)}€</span>
+                  <span className="text-5xl font-black text-white">{precoAnalise.toFixed(2)}€</span>
                   <span className="text-blue-400/60 font-medium text-xl">/análise</span>
                 </div>
               </div>
               <div>
                 <button
                   onClick={handleComprar}
-                  disabled={checkoutLoading}
+                  disabled={checkoutLoading || !compraAberta}
                   className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-lg py-6 px-12 rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.6)] hover:shadow-[0_0_60px_rgba(37,99,235,0.8)] transition-all transform hover:-translate-y-1 uppercase tracking-wide border border-blue-400/30 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {checkoutLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Crown className="w-6 h-6" />}
-                  Comprar Análise Premium
+                  {compraAberta ? 'Comprar Análise Premium' : 'Compras Encerradas'}
                 </button>
-                <p className="text-blue-300/60 text-sm mt-4">Pagamento único. Sem subscrições.</p>
+                <p className="text-blue-300/60 text-sm mt-4">
+                  {compraAberta ? 'Pagamento único. Sem subscrições.' : 'Volta amanhã para a próxima análise.'}
+                </p>
               </div>
             </div>
           </div>
@@ -323,7 +346,7 @@ function PageHeader({ analise }: { analise?: AnalisePremiumType | null }) {
           </div>
           <div>
             <p className="text-xs font-bold text-blue-400/80 uppercase tracking-widest">Data</p>
-            <p className="text-lg font-black text-white">{analise.data}</p>
+            <p className="text-lg font-black text-white">{formatData(analise.data)}</p>
           </div>
         </div>
       ) : (

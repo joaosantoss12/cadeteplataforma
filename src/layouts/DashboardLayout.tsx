@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, 
-  MapPin, 
-  Flame, 
+  LayoutDashboard,
   Trophy,
   LogOut, 
   Star,
@@ -26,16 +24,22 @@ export default function DashboardLayout() {
   
   // Estados para menus
   const [analisesOpen, setAnalisesOpen] = useState(false);
-  const [notificacoesAtivas, setNotificacoesAtivas] = useState(true);
+  // Preferência de notificações persistida no localStorage
+  const [notificacoesAtivas, setNotificacoesAtivas] = useState(
+    () => localStorage.getItem('notificacoesAtivas') !== 'false'
+  );
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Estado do Mobile Menu
+
+  // Guarda a preferência sempre que muda
+  useEffect(() => {
+    localStorage.setItem('notificacoesAtivas', String(notificacoesAtivas));
+  }, [notificacoesAtivas]);
 
   const menuItems = [
     { name: 'Início', path: '/inicio', icon: LayoutDashboard },
     { name: 'Gestão de Banca', path: '/gestao', icon: LineChart },
-    { name: 'Cadete pelos Estádios', path: '/estadios', icon: MapPin },
-    { name: 'Cadete no Submundo', path: '/submundo', icon: Flame },
     { name: 'Desafios do Cadete', path: '/desafios', icon: Trophy },
-    { name: 'CapitansBet Casino', path: '/capitansbet', icon: Sparkles },
+    { name: 'SpinAndFlix Casino', path: '/capitansbet', icon: Sparkles },
   ];
 
   const analisesItems = [
