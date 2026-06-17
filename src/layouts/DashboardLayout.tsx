@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard,
   Trophy,
-  LogOut, 
+  LogOut,
   Star,
   FileText,
   ChevronDown,
@@ -38,7 +38,7 @@ export default function DashboardLayout() {
   const menuItems = [
     { name: 'Início', path: '/inicio', icon: LayoutDashboard },
     { name: 'Gestão de Banca', path: '/gestao', icon: LineChart },
-    { name: 'Desafios do Cadete', path: '/desafios', icon: Trophy },
+    { name: 'Desafios do Cadete', path: '/desafios', icon: Star },
     { name: 'Mundial 2026', path: '/mundial-2026', icon: Trophy },
     { name: 'SpinAndFlix Casino', path: '/capitansbet', icon: Sparkles },
   ];

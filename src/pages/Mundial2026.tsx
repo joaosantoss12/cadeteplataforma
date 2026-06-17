@@ -26,7 +26,7 @@ export default function Mundial2026() {
   }, []);
 
   const handleSubscribe = () => {
-    startCheckout({ amount: 50, name: 'Acesso Mundial 2026' }, 'payment', 'mundial_2026');
+    startCheckout({ amount: 40, name: 'Acesso Mundial 2026' }, 'payment', 'mundial_2026');
   };
 
   return (
@@ -95,7 +95,7 @@ export default function Mundial2026() {
                     <ShieldCheck className="w-5 h-5" />
                     <span className="font-bold text-sm uppercase tracking-widest">Pagamento Único</span>
                   </div>
-                  <span className="text-4xl font-black text-white">50€</span>
+                  <span className="text-4xl font-black text-white">40€</span>
                 </div>
 
                 <div className="space-y-3">
@@ -105,8 +105,9 @@ export default function Mundial2026() {
                     className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all transform hover:-translate-y-1 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2 uppercase tracking-wide"
                   >
                     {checkoutLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trophy className="w-5 h-5" />}
-                    Garantir Lugar — 50€
+                    Garantir Lugar — 40€
                   </button>
+                  <p className="text-center text-xs text-blue-200/50">Pagamentos apenas até 1 de Agosto</p>
 
                   <a
                     href={TELEGRAM_LINK}
