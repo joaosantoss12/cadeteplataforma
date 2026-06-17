@@ -115,7 +115,7 @@ export default function Mundial2026() {
                     className="w-full py-4 rounded-xl font-bold text-emerald-400 border border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-500/10 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-sm"
                   >
                     <Send className="w-4 h-4" />
-                    Enviar Mensagem
+                    Entrar Gratuitamente
                   </a>
                 </div>
               </div>
