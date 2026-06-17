@@ -81,6 +81,7 @@ Deno.serve(async (req: Request) => {
     const successUrlMap: Record<string, string> = {
       analise_premium: `${origin}/analise-premium?payment=success&plan=analise_premium`,
       desafios: `${origin}/desafios?payment=success&plan=desafios`,
+      mundial_2026: `${origin}/mundial-2026?payment=success&plan=mundial_2026`,
     };
     const successUrl = successUrlMap[plan] ?? `${origin}/dashboard?payment=success&plan=${plan}`;
 

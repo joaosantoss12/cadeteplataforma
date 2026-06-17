@@ -7,6 +7,7 @@ import AnaliseDia from './pages/AnaliseDia';
 import AnalisePremium from './pages/AnalisePremium';
 import CapitansBet from './pages/CapitansBet';
 import GestaoBanca from './pages/GestaoBanca';
+import Mundial2026 from './pages/Mundial2026';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
 import Registo from './pages/Registo';
@@ -26,6 +27,10 @@ function DashboardPaymentRedirect() {
     }
     if (plan === 'desafios') {
       return <Navigate to={`/desafios?payment=success&plan=desafios`} replace />;
+    }
+    if (plan === 'mundial_2026') {
+      window.location.href = "https://t.me/cadetesuport?text=Quero%20entrar%20no%20grupo%20do%20Mundial";
+      return null;
     }
   }
   return <Navigate to="/inicio" replace />;
@@ -57,6 +62,7 @@ function App() {
             <Route path="/analise-dia" element={<AnaliseDia />} />
             <Route path="/analise-premium" element={<AnalisePremium />} />
             <Route path="/capitansbet" element={<CapitansBet />} />
+            <Route path="/mundial-2026" element={<Mundial2026 />} />
             <Route path="/admin" element={<Admin />} />
           </Route>
         </Route>

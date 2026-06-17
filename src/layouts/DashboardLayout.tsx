@@ -39,6 +39,7 @@ export default function DashboardLayout() {
     { name: 'Início', path: '/inicio', icon: LayoutDashboard },
     { name: 'Gestão de Banca', path: '/gestao', icon: LineChart },
     { name: 'Desafios do Cadete', path: '/desafios', icon: Trophy },
+    { name: 'Mundial 2026', path: '/mundial-2026', icon: Trophy },
     { name: 'SpinAndFlix Casino', path: '/capitansbet', icon: Sparkles },
   ];
 
