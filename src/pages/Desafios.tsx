@@ -280,7 +280,7 @@ export default function Desafios() {
               className="w-full md:w-auto bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-400 hover:to-indigo-400 text-white font-black text-sm py-3 px-6 rounded-xl shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all uppercase tracking-wide flex items-center justify-center gap-2 cursor-pointer"
             >
               <Coins className="w-5 h-5" />
-              Contactar Telegram
+              Enviar Mensagem
             </a>
             {jaTemAcesso ? (
               <a
