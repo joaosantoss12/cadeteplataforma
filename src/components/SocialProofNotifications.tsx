@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle, Flame, Sparkles, X } from 'lucide-react';
+import { Flame, Sparkles, X } from 'lucide-react';
 
 interface Notification {
   id: number;
   name: string;
   action: string;
-  type: 'free' | 'submundo' | 'desafios';
+  type: 'submundo' | 'desafios';
 }
 
 const names = [
@@ -25,19 +25,16 @@ const names = [
 ];
 
 const actions = {
-  free: 'entrou no grupo grátis',
   submundo: 'juntou-se ao Cadete Submundo',
   desafios: 'juntou-se ao grupo Desafios'
 };
 
 const icons = {
-  free: CheckCircle,
   submundo: Flame,
   desafios: Sparkles
 };
 
 const colors = {
-  free: 'from-blue-600 to-indigo-600',
   submundo: 'from-indigo-600 to-purple-600',
   desafios: 'from-blue-500 to-indigo-500'
 };
@@ -49,7 +46,7 @@ export default function SocialProofNotifications() {
   useEffect(() => {
     const createNotification = () => {
       const randomName = names[Math.floor(Math.random() * names.length)];
-      const types: Array<'free' | 'submundo' | 'desafios'> = ['free', 'submundo', 'desafios'];
+      const types: Array<'submundo' | 'desafios'> = ['submundo', 'desafios'];
       const randomType = types[Math.floor(Math.random() * types.length)];
 
       const notification: Notification = {

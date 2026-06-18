@@ -192,6 +192,7 @@ CREATE TABLE IF NOT EXISTS analise_premium (
   analise_conclusao TEXT NOT NULL,
   resultado TEXT DEFAULT 'pendente' CHECK (resultado IN ('pendente', 'green', 'red')),
   preco DECIMAL(10,2) DEFAULT 5.00,
+  compensa_analise_id INTEGER REFERENCES analise_premium(id) ON DELETE SET NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

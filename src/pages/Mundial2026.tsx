@@ -110,7 +110,7 @@ export default function Mundial2026() {
                   <p className="text-center text-xs text-blue-200/50">Pagamentos apenas até 1 de Agosto</p>
 
                   <a
-                    href={TELEGRAM_LINK}
+                    href="https://t.me/cadetesuport?text=Quero%20entrar%20no%20grupo%20do%20Mundial"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full py-4 rounded-xl font-bold text-emerald-400 border border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-500/10 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-sm"

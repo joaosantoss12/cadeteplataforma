@@ -90,6 +90,19 @@ export default function AnalisePremium() {
           const diaAposta = (analiseData.data || '').slice(0, 10);
           if (diaCompra === diaAposta) setHasAccess(true);
         }
+
+        // Compensação: se esta análise compensa uma análise anterior, quem comprou
+        // essa análise antiga ganha acesso grátis (sem restrição de data).
+        if (analiseData.compensa_analise_id) {
+          const { data: compraAntigaRaw } = await supabase
+            .from('compras_premium')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('analise_premium_id', analiseData.compensa_analise_id)
+            .maybeSingle();
+
+          if (compraAntigaRaw) setHasAccess(true);
+        }
       }
     }
 

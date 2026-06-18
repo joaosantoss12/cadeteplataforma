@@ -210,6 +210,7 @@ export interface Database {
           analise_conclusao: string
           resultado: 'pendente' | 'green' | 'red' | null
           preco: number
+          compensa_analise_id: number | null
           created_at: string
         }
         Insert: {
@@ -226,6 +227,7 @@ export interface Database {
           analise_conclusao: string
           resultado?: 'pendente' | 'green' | 'red' | null
           preco?: number
+          compensa_analise_id?: number | null
           created_at?: string
         }
         Update: {
@@ -242,6 +244,7 @@ export interface Database {
           analise_conclusao?: string
           resultado?: 'pendente' | 'green' | 'red' | null
           preco?: number
+          compensa_analise_id?: number | null
           created_at?: string
         }
       }

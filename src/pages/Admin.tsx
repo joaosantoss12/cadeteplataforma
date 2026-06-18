@@ -616,7 +616,8 @@ function AnalisesPremiumTab() {
     analise_estatisticas_fora: '',
     analise_conclusao: '',
     resultado: 'pendente',
-    preco: precoGlobal
+    preco: precoGlobal,
+    compensa_analise_id: null
   });
 
   const resetForm = () => {
@@ -632,7 +633,8 @@ function AnalisesPremiumTab() {
       analise_estatisticas_fora: '',
       analise_conclusao: '',
       resultado: 'pendente',
-      preco: precoGlobal
+      preco: precoGlobal,
+      compensa_analise_id: null
     });
     setEditingId(null);
     setShowForm(false);
@@ -841,6 +843,26 @@ function AnalisesPremiumTab() {
                   <option value="green">Green ✓</option>
                   <option value="red">Red ✗</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-blue-300/70 mb-2">Compensação (grátis para quem comprou)</label>
+                <select
+                  value={formData.compensa_analise_id ?? ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, compensa_analise_id: e.target.value ? parseInt(e.target.value, 10) : null }))}
+                  className="w-full bg-[#03091a] border border-blue-900/50 rounded-xl px-4 py-3 text-white cursor-pointer"
+                >
+                  <option value="">Nenhuma — análise paga normal</option>
+                  {analises
+                    .filter(a => a.id !== editingId)
+                    .map(a => (
+                      <option key={a.id} value={a.id}>
+                        {formatData(a.data)} — {a.jogo}{a.resultado === 'red' ? ' (Red ✗)' : ''}
+                      </option>
+                    ))}
+                </select>
+                <p className="text-xs text-blue-300/50 mt-1">
+                  Se escolheres uma análise anterior, quem a comprou recebe esta gratuitamente como compensação.
+                </p>
               </div>
               <div className="flex gap-3 pt-4">
                 <button
