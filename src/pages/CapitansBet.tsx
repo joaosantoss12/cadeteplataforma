@@ -206,7 +206,7 @@ export default function CapitansBet() {
                     {/* Botão Jogar - Aparece ao hover */}
                     <div className="absolute inset-0 flex items-center justify-center bg-[#081533]/95 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-xl">
                       <a
-                        href="https://partners.meratrack.xyz/click?o=668&a=1307"
+                        href="https://mio.novarao.com/redirect.aspx?pid=104943&lpid=758&bid=1478"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-sm py-2 px-6 rounded-lg shadow-[0_0_30px_rgba(37,99,235,0.6)] transition-all transform hover:scale-105 uppercase tracking-wide"
@@ -236,7 +236,7 @@ export default function CapitansBet() {
             <div className="flex items-center justify-center gap-4 mb-6">
               <Crown className="w-12 h-12 md:w-16 md:h-16 text-blue-400 animate-pulse" />
               <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-500 drop-shadow-[0_0_30px_rgba(37,99,235,0.5)]">
-                SpinAndFlix
+                Ivibet
               </h1>
               <Crown className="w-12 h-12 md:w-16 md:h-16 text-blue-400 animate-pulse" />
             </div>
@@ -248,8 +248,8 @@ export default function CapitansBet() {
 
             {/* CTA Principal */}
             <div className="pt-8 space-y-4">
-              <a 
-                href="https://partners.meratrack.xyz/click?o=668&a=1307"
+              <a
+                href="https://mio.novarao.com/redirect.aspx?pid=104943&lpid=758&bid=1478"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-xl md:text-2xl py-6 px-16 rounded-2xl shadow-[0_0_60px_rgba(37,99,235,0.7)] hover:shadow-[0_0_80px_rgba(37,99,235,0.9)] transition-all transform hover:scale-105 uppercase tracking-wide cursor-pointer"
@@ -267,7 +267,7 @@ export default function CapitansBet() {
       {/* Benefícios */}
       <div className="space-y-6">
         <h2 className="text-3xl md:text-4xl font-black text-white text-center mb-8">
-          Porquê escolher a <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">SpinAndFlix</span>?
+          Porquê escolher a <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Ivibet</span>?
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
