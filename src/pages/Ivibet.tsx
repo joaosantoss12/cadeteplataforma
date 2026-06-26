@@ -96,7 +96,7 @@ const winners = Array.from({ length: 12 }, (_, i) => ({
   image: slotData[i % slotData.length].image
 }));
 
-export default function CapitansBet() {
+export default function Ivibet() {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const rafRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number | null>(null);

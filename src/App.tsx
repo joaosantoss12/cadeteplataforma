@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Desafios from './pages/Desafios';
 import AnaliseDia from './pages/AnaliseDia';
 import AnalisePremium from './pages/AnalisePremium';
-import CapitansBet from './pages/CapitansBet';
+import Ivibet from './pages/Ivibet';
 import GestaoBanca from './pages/GestaoBanca';
 import Mundial2026 from './pages/Mundial2026';
 import Admin from './pages/Admin';
@@ -61,7 +61,9 @@ function App() {
             <Route path="/desafios" element={<Desafios />} />
             <Route path="/analise-dia" element={<AnaliseDia />} />
             <Route path="/analise-premium" element={<AnalisePremium />} />
-            <Route path="/capitansbet" element={<CapitansBet />} />
+            <Route path="/ivibet" element={<Ivibet />} />
+            {/* Legacy path redirect */}
+            <Route path="/capitansbet" element={<Navigate to="/ivibet" replace />} />
             <Route path="/mundial-2026" element={<Mundial2026 />} />
             <Route path="/admin" element={<Admin />} />
           </Route>

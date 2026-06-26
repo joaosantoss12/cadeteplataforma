@@ -40,7 +40,7 @@ export default function DashboardLayout() {
     { name: 'Gestão de Banca', path: '/gestao', icon: LineChart },
     { name: 'Desafios do Cadete', path: '/desafios', icon: Star },
     { name: 'Mundial 2026', path: '/mundial-2026', icon: Trophy },
-    { name: 'Ivibet Casino', path: '/capitansbet', icon: Sparkles },
+    { name: 'Ivibet Casino', path: '/ivibet', icon: Sparkles },
   ];
 
   const analisesItems = [
