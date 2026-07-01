@@ -12,7 +12,9 @@ import {
   Bell,
   Menu, // Ícone do hambúrguer
   X, // Ícone para fechar
-  Shield // Ícone Admin
+  Shield, // Ícone Admin
+  Swords, // Ícone Submundo
+  Activity // Ícone Ténis & Basebol
 } from 'lucide-react';
 import SocialProofNotifications from '../components/SocialProofNotifications';
 import { useAuth } from '../contexts/AuthContext';
@@ -40,6 +42,8 @@ export default function DashboardLayout() {
     { name: 'Gestão de Banca', path: '/gestao', icon: LineChart },
     { name: 'Desafios do Cadete', path: '/desafios', icon: Star },
     { name: 'Mundial 2026', path: '/mundial-2026', icon: Trophy },
+    { name: 'Cadete no Submundo', path: '/submundo', icon: Swords },
+    { name: 'Ténis & Basebol', path: '/tenis-basebol', icon: Activity },
     { name: 'Ivibet Casino', path: '/ivibet', icon: Sparkles },
   ];
 
