@@ -281,7 +281,7 @@ export default function AnalisePremium() {
             <div>
               <h2 className="text-4xl md:text-5xl font-black text-white mb-4">Conteúdo Premium Bloqueado</h2>
               <p className="text-blue-200/70 text-lg">
-                Acede à análise mais profunda e rentável do Cadete. Pagamento único com acesso permanente.
+                Acede à análise mais profunda e rentável do Cadete. Pagamento único com acesso direto na hora.
               </p>
               <p className={`mt-3 text-sm font-bold ${compraAberta ? 'text-blue-300/80' : 'text-red-400'}`}>
                 {compraAberta
@@ -297,7 +297,7 @@ export default function AnalisePremium() {
                   'Análise completa de um jogo premium com odd mínima de @1.60',
                   'Estatísticas avançadas e modelos preditivos exclusivos',
                   'Histórico de acertos superior a 75% nos últimos 6 meses',
-                  'Acesso permanente à análise após a compra',
+                  'Acesso direto na hora à análise após a compra',
                   'Estratégia de aposta e gestão de banca incluída',
                   'Suporte via Telegram para esclarecimento de dúvidas',
                 ].map((benefit, i) => (
@@ -390,9 +390,15 @@ function SuccessModal({ onClose }: { onClose: () => void }) {
           </div>
         </div>
         <h2 className="text-2xl font-black text-white text-center mb-2">Pagamento Confirmado!</h2>
-        <p className="text-blue-200/70 text-center text-sm mb-6">
+        <p className="text-blue-200/70 text-center text-sm mb-4">
           O teu acesso à análise premium está ativo. A análise ficará disponível em instantes.
         </p>
+        <div className="bg-[#081533]/80 border border-blue-900/40 rounded-xl px-4 py-3 mb-6">
+          <p className="text-blue-100/80 text-center text-sm leading-relaxed">
+            A aposta premium será também enviada para o teu email num prazo máximo de 5 minutos.
+            Se não a encontrares, verifica a pasta de <strong className="text-white">spam</strong>.
+          </p>
+        </div>
         <button
           onClick={onClose}
           className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 transition-all flex items-center justify-center gap-2"
