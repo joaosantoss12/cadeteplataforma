@@ -18,7 +18,7 @@ import { useConfiguracoes } from '../hooks/useAdmin';
 import { useStripeCheckout } from '../hooks/useStripeCheckout';
 import { supabase } from '../lib/supabase';
 
-const TELEGRAM_LINK = 'https://t.me/+pP0OBzDU65MwYzlk';
+const TELEGRAM_LINK = 'https://t.me/+O0NTKCZXd_5iMjU0';
 
 export default function Desafios() {
   const { getConfiguracao, loading } = useConfiguracoes();
