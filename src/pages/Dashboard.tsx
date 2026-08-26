@@ -1,4 +1,5 @@
-import { TrendingUp, CheckCircle, Zap, Users, AlertCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { TrendingUp, CheckCircle, Zap, Users, AlertCircle, Crown } from 'lucide-react';
 
 export default function Dashboard() {
   return (
@@ -45,15 +46,25 @@ export default function Dashboard() {
             </p>
           </div>
           
-          <a 
-            href="https://t.me/+h5HDhTdXCYo4MzI5"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-black text-[13px] sm:text-base md:text-lg lg:text-xl py-5 px-4 md:py-7 rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.6)] hover:shadow-[0_0_60px_rgba(37,99,235,0.8)] transition-all transform hover:-translate-y-1 w-full uppercase tracking-wide border border-blue-400/30 whitespace-nowrap flex justify-center items-center relative overflow-hidden group/btn cursor-pointer"
-          >
-            <span className="relative z-10">Entrar Agora e Receber Entradas</span>
-            <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover/btn:scale-100 group-hover/btn:bg-white/10"></div>
-          </a>
+          <div className="flex flex-col gap-4 w-full">
+            <Link
+              to="/analise-premium"
+              className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-500 hover:from-amber-400 hover:via-yellow-400 hover:to-amber-400 text-[#1a1200] font-black text-[13px] sm:text-base md:text-lg lg:text-xl py-5 px-4 md:py-7 rounded-2xl shadow-[0_0_50px_rgba(245,158,11,0.7)] hover:shadow-[0_0_70px_rgba(245,158,11,0.95)] transition-all transform hover:-translate-y-1 hover:scale-[1.02] w-full uppercase tracking-wide border border-amber-300/50 whitespace-nowrap flex justify-center items-center gap-3 relative overflow-hidden group/btn cursor-pointer animate-pulse"
+            >
+              <Crown className="w-6 h-6 relative z-10 shrink-0" />
+              <span className="relative z-10">Comprar Aposta Premium</span>
+              <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover/btn:scale-100 group-hover/btn:bg-white/10"></div>
+            </Link>
+
+            <a
+              href="https://t.me/+h5HDhTdXCYo4MzI5"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-blue-950/40 hover:bg-blue-900/50 text-blue-100 font-bold text-[12px] sm:text-sm md:text-base py-3.5 px-4 md:py-4 rounded-2xl transition-all w-full uppercase tracking-wide border border-blue-800/50 hover:border-blue-600/60 whitespace-nowrap flex justify-center items-center cursor-pointer"
+            >
+              Entrar Grátis e Receber Entradas
+            </a>
+          </div>
 
           <div className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-amber-400 bg-amber-500/10 px-4 py-2 rounded-lg border border-amber-500/20 backdrop-blur-md w-fit">
             <AlertCircle className="w-4 h-4 animate-pulse" />

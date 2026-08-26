@@ -3,9 +3,8 @@ import DashboardLayout from './layouts/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import Desafios from './pages/Desafios';
-import AnaliseDia from './pages/AnaliseDia';
 import AnalisePremium from './pages/AnalisePremium';
-import Ivibet from './pages/Ivibet';
+import Coldbet from './pages/Coldbet';
 import GestaoBanca from './pages/GestaoBanca';
 import Mundial2026 from './pages/Mundial2026';
 import Submundo from './pages/Submundo';
@@ -61,11 +60,11 @@ function App() {
             <Route path="/inicio" element={<Dashboard />} />
             <Route path="/gestao" element={<GestaoBanca />} />
             <Route path="/desafios" element={<Desafios />} />
-            <Route path="/analise-dia" element={<AnaliseDia />} />
             <Route path="/analise-premium" element={<AnalisePremium />} />
-            <Route path="/ivibet" element={<Ivibet />} />
-            {/* Legacy path redirect */}
-            <Route path="/capitansbet" element={<Navigate to="/ivibet" replace />} />
+            <Route path="/coldbet" element={<Coldbet />} />
+            {/* Legacy path redirects */}
+            <Route path="/capitansbet" element={<Navigate to="/coldbet" replace />} />
+            <Route path="/ivibet" element={<Navigate to="/coldbet" replace />} />
             <Route path="/mundial-2026" element={<Mundial2026 />} />
             <Route path="/submundo" element={<Submundo />} />
             <Route path="/tenis-basebol" element={<TenisBasebol />} />

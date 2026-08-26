@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
+import {
   LayoutDashboard,
   Trophy,
   LogOut,
   Star,
   FileText,
-  ChevronDown,
   Sparkles,
   LineChart,
   Bell,
@@ -23,9 +22,7 @@ export default function DashboardLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, isAdmin } = useAuth();
-  
-  // Estados para menus
-  const [analisesOpen, setAnalisesOpen] = useState(false);
+
   // Preferência de notificações persistida no localStorage
   const [notificacoesAtivas, setNotificacoesAtivas] = useState(
     () => localStorage.getItem('notificacoesAtivas') !== 'false'
@@ -44,21 +41,9 @@ export default function DashboardLayout() {
     { name: 'Mundial 2026', path: '/mundial-2026', icon: Trophy },
     { name: 'Cadete no Submundo', path: '/submundo', icon: Swords },
     { name: 'Ténis & Basebol', path: '/tenis-basebol', icon: Activity },
-    { name: 'Ivibet Casino', path: '/ivibet', icon: Sparkles },
+    { name: 'Análise Premium', path: '/analise-premium', icon: FileText },
+    { name: 'Coldbet Casino', path: '/coldbet', icon: Sparkles },
   ];
-
-  const analisesItems = [
-    { name: 'Análise do Dia', path: '/analise-dia' },
-    { name: 'Análise Premium', path: '/analise-premium' }
-  ];
-
-  const isAnalisesActive = analisesItems.some(item => location.pathname === item.path);
-
-  useEffect(() => {
-    if (isAnalisesActive) {
-      setAnalisesOpen(true);
-    }
-  }, [isAnalisesActive]);
 
   // Fecha o menu mobile sempre que a rota mudar
   useEffect(() => {
@@ -68,8 +53,6 @@ export default function DashboardLayout() {
   const getCurrentPageName = () => {
     const mainItem = menuItems.find(item => item.path === location.pathname);
     if (mainItem) return mainItem.name;
-    const analiseItem = analisesItems.find(item => item.path === location.pathname);
-    if (analiseItem) return analiseItem.name;
     return 'Área de Membros';
   };
 
@@ -138,46 +121,6 @@ export default function DashboardLayout() {
               </Link>
             );
           })}
-
-          {/* Menu Análises */}
-          <div className="space-y-1">
-            <button
-              onClick={() => setAnalisesOpen(!analisesOpen)}
-              className={`flex items-center justify-between w-full px-3 py-3 rounded-xl transition-all duration-200 cursor-pointer ${
-                isAnalisesActive 
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold' 
-                  : 'text-blue-100/60 hover:bg-blue-900/30 hover:text-blue-50'
-              }`}
-            >
-              <div className="flex items-center">
-                <FileText className={`w-5 h-5 mr-3 ${isAnalisesActive ? 'text-white' : 'text-blue-400/50'}`} />
-                Análises
-              </div>
-              <ChevronDown className={`w-4 h-4 transition-transform ${analisesOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {analisesOpen && (
-              <div className="ml-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                {analisesItems.map((item) => {
-                  const isActive = location.pathname === item.path;
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.path}
-                      onClick={() => setIsMenuOpen(false)} // Fecha ao clicar no sub-item
-                      className={`flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 text-sm ${
-                        isActive 
-                          ? 'bg-blue-900/50 text-white font-semibold border-l-2 border-blue-400' 
-                          : 'text-blue-200/60 hover:bg-blue-900/20 hover:text-blue-100 border-l-2 border-transparent'
-                      }`}
-                    >
-                      <span className="ml-2">{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
 
           {/* Link Admin (apenas para admins) */}
           {isAdmin && (
