@@ -6,9 +6,10 @@ import Desafios from './pages/Desafios';
 import AnalisePremium from './pages/AnalisePremium';
 import Coldbet from './pages/Coldbet';
 import GestaoBanca from './pages/GestaoBanca';
-import Mundial2026 from './pages/Mundial2026';
-import Submundo from './pages/Submundo';
-import TenisBasebol from './pages/TenisBasebol';
+import AbaixoDe3 from './pages/Mundial2026';
+import TipsDaBruna from './pages/Submundo';
+import Tenis from './pages/TenisBasebol';
+import TipsDoManel from './pages/TipsDoManel';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
 import Registo from './pages/Registo';
@@ -29,8 +30,8 @@ function DashboardPaymentRedirect() {
     if (plan === 'desafios') {
       return <Navigate to={`/desafios?payment=success&plan=desafios`} replace />;
     }
-    if (plan === 'mundial_2026') {
-      window.location.href = "https://t.me/cadetesuport?text=Quero%20entrar%20no%20grupo%20do%20Mundial";
+    if (plan === 'abaixo_de_3') {
+      window.location.href = "https://t.me/+_E6Ayd35ZLY0NGM8";
       return null;
     }
   }
@@ -65,9 +66,12 @@ function App() {
             {/* Legacy path redirects */}
             <Route path="/capitansbet" element={<Navigate to="/coldbet" replace />} />
             <Route path="/ivibet" element={<Navigate to="/coldbet" replace />} />
-            <Route path="/mundial-2026" element={<Mundial2026 />} />
-            <Route path="/submundo" element={<Submundo />} />
-            <Route path="/tenis-basebol" element={<TenisBasebol />} />
+            <Route path="/abaixo-de-3" element={<AbaixoDe3 />} />
+            {/* Legacy path redirect */}
+            <Route path="/mundial-2026" element={<Navigate to="/abaixo-de-3" replace />} />
+            <Route path="/submundo" element={<TipsDaBruna />} />
+            <Route path="/tenis-basebol" element={<Tenis />} />
+            <Route path="/tips-do-manel" element={<TipsDoManel />} />
             <Route path="/admin" element={<Admin />} />
           </Route>
         </Route>

@@ -192,6 +192,19 @@ Deno.serve(async (req: Request) => {
           });
         }
       }
+    } else if (session.mode === 'payment' && plan === 'abaixo_de_3') {
+      // One-time payment for 6 months of access to "Abaixo de 3 é Para Meninos"
+      const sixMonthsFromNow = new Date();
+      sixMonthsFromNow.setMonth(sixMonthsFromNow.getMonth() + 6);
+      await supabase
+        .from('profiles')
+        .update({
+          subscription_status: 'active',
+          subscription_plan: plan,
+          stripe_subscription_id: null,
+          subscription_end_date: sixMonthsFromNow.toISOString(),
+        })
+        .eq('id', userId);
     } else if (session.mode === 'payment') {
       // One-time payment (e.g. Desafios lifetime)
       await supabase

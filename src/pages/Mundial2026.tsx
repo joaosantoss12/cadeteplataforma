@@ -10,23 +10,56 @@ import {
   CheckCircle2,
   Send
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useStripeCheckout } from '../hooks/useStripeCheckout';
+import { supabase } from '../lib/supabase';
 
-const TELEGRAM_LINK = 'https://t.me/+Eu4vvdGhN_gzZTc0';
+const TELEGRAM_LINK = 'https://t.me/+_E6Ayd35ZLY0NGM8';
+const PLAN = 'abaixo_de_3';
 
-export default function Mundial2026() {
+export default function AbaixoDe3() {
   const { startCheckout, loading: checkoutLoading, error: checkoutError } = useStripeCheckout();
 
+  const [jaTemAcesso, setJaTemAcesso] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Verifica se o utilizador já tem acesso ativo
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success' && params.get('plan') === 'mundial_2026') {
-      window.location.href = TELEGRAM_LINK;
-    }
+    const checkAccess = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setCheckingAccess(false); return; }
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('subscription_status, subscription_plan')
+        .eq('id', user.id)
+        .single();
+
+      const profile = data as { subscription_status?: string; subscription_plan?: string } | null;
+      if (profile?.subscription_status === 'active' && profile?.subscription_plan === PLAN) {
+        setJaTemAcesso(true);
+      }
+      setCheckingAccess(false);
+    };
+    checkAccess();
   }, []);
 
+  // Ao voltar do Stripe com sucesso, entra logo no grupo
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('payment') === 'success' && params.get('plan') === PLAN) {
+      setJaTemAcesso(true);
+      navigate('/abaixo-de-3', { replace: true });
+      window.location.href = TELEGRAM_LINK;
+    }
+  }, [location.search, navigate]);
+
   const handleSubscribe = () => {
-    startCheckout({ amount: 40, name: 'Acesso Mundial 2026' }, 'payment', 'mundial_2026');
+    startCheckout({ amount: 50, name: 'Abaixo de 3 é Para Meninos — 6 Meses' }, 'payment', PLAN);
   };
 
   return (
@@ -44,10 +77,10 @@ export default function Mundial2026() {
         <div>
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight flex items-center gap-3 drop-shadow-lg">
             <Trophy className="w-10 h-10 text-emerald-500" />
-            Mundial <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">2026</span>
+            Abaixo de 3 é <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Para Meninos</span>
           </h1>
           <p className="mt-3 text-blue-200/70 max-w-2xl text-lg">
-            Garante já o teu lugar no grupo VIP do Mundial 2026. Análises diárias, apostas de valor e acompanhamento total durante a maior competição do mundo.
+            O grupo de odds altas do Cadete. Entradas de valor com retornos a sério para quem não tem medo de arriscar.
           </p>
         </div>
 
@@ -57,8 +90,8 @@ export default function Mundial2026() {
             <Globe className="w-6 h-6 text-emerald-400" />
           </div>
           <div>
-            <p className="text-xs font-bold text-emerald-400/80 uppercase tracking-widest">Mundial</p>
-            <p className="text-lg font-black text-white">EUA, CAN, MEX</p>
+            <p className="text-xs font-bold text-emerald-400/80 uppercase tracking-widest">Odds Altas</p>
+            <p className="text-lg font-black text-white">Acesso 6 Meses</p>
           </div>
         </div>
       </div>
@@ -82,10 +115,10 @@ export default function Mundial2026() {
 
               <div>
                 <h2 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-                  O Maior Palco do <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">Futebol</span>
+                  Se é <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">Abaixo de 3</span>, não é para ti
                 </h2>
                 <p className="text-blue-200/80 text-lg leading-relaxed">
-                  Não percas a oportunidade de lucrar com o maior evento desportivo do planeta. Preço especial de pré-lançamento com acesso vitalício ao grupo do mundial.
+                  Entradas selecionadas com odds altas e potencial de retorno superior. Acesso ao grupo VIP por 6 meses, com análises e alertas em tempo real.
                 </p>
               </div>
 
@@ -93,47 +126,49 @@ export default function Mundial2026() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2 text-emerald-400">
                     <ShieldCheck className="w-5 h-5" />
-                    <span className="font-bold text-sm uppercase tracking-widest">Pagamento Único</span>
+                    <span className="font-bold text-sm uppercase tracking-widest">6 Meses de Acesso</span>
                   </div>
-                  <span className="text-4xl font-black text-white">40€</span>
+                  <span className="text-4xl font-black text-white">50€</span>
                 </div>
 
                 <div className="space-y-3">
-                  <button
-                    onClick={handleSubscribe}
-                    disabled={checkoutLoading}
-                    className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all transform hover:-translate-y-1 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2 uppercase tracking-wide"
-                  >
-                    {checkoutLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trophy className="w-5 h-5" />}
-                    Garantir Lugar — 40€
-                  </button>
-                  <p className="text-center text-xs text-blue-200/50">Pagamentos apenas até 1 de Agosto</p>
-
-                  <a
-                    href="https://t.me/cadetesuport?text=Quero%20entrar%20no%20grupo%20do%20Mundial"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-4 rounded-xl font-bold text-emerald-400 border border-emerald-500/40 hover:border-emerald-400 hover:bg-emerald-500/10 transition-all flex items-center justify-center gap-2 uppercase tracking-wide text-sm"
-                  >
-                    <Send className="w-4 h-4" />
-                    Entrar Gratuitamente
-                  </a>
+                  {jaTemAcesso ? (
+                    <a
+                      href={TELEGRAM_LINK}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all transform hover:-translate-y-1 cursor-pointer flex items-center justify-center gap-2 uppercase tracking-wide"
+                    >
+                      <Send className="w-5 h-5" />
+                      Entrar no Grupo
+                    </a>
+                  ) : (
+                    <button
+                      onClick={handleSubscribe}
+                      disabled={checkoutLoading || checkingAccess}
+                      className="w-full py-4 rounded-xl font-black text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all transform hover:-translate-y-1 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2 uppercase tracking-wide"
+                    >
+                      {(checkoutLoading || checkingAccess) ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trophy className="w-5 h-5" />}
+                      Garantir Lugar — 50€ / 6 Meses
+                    </button>
+                  )}
+                  <p className="text-center text-xs text-blue-200/50">Pagamento único, acesso válido por 6 meses</p>
                 </div>
               </div>
             </div>
 
-            {/* Direita: Imagem do Mundial */}
+            {/* Direita: Imagem */}
             <div className="relative rounded-2xl overflow-hidden border-2 border-emerald-500/30 shadow-2xl group h-full min-h-[400px]">
               <div className="absolute inset-0 bg-gradient-to-t from-[#03091a] via-[#03091a]/40 to-transparent opacity-90 z-10 transition-opacity group-hover:opacity-70"></div>
               <img
                 src="/cadete_mundial.jpeg"
-                alt="Mundial 2026"
+                alt="Abaixo de 3 é Para Meninos"
                 className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute bottom-8 left-8 right-8 z-20 space-y-4">
                 <ul className="space-y-3">
                   {[
-                    'Análises diárias de todos os jogos',
+                    'Entradas de odds altas selecionadas',
                     'Apostas Pronta-a-usar',
                     'Acesso Imediato ao Grupo VIP'
                   ].map((feature, i) => (
@@ -154,7 +189,7 @@ export default function Mundial2026() {
       <div className="space-y-6 pt-4">
         <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
           <Target className="w-6 h-6 text-blue-500" />
-          O que vais encontrar no passe Mundial?
+          O que vais encontrar no grupo?
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -164,7 +199,7 @@ export default function Mundial2026() {
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Cobertura Total</h3>
             <p className="text-blue-200/70 text-sm leading-relaxed">
-              Desde a fase de grupos até à grande final. Vamos analisar todos os confrontos para extrair as odds de maior valor do mercado.
+              Análises diárias focadas em entradas de odds altas, todos os dias, extraídas das melhores oportunidades do mercado.
             </p>
           </div>
 
@@ -174,7 +209,7 @@ export default function Mundial2026() {
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Gestão de Banca Específica</h3>
             <p className="text-blue-200/70 text-sm leading-relaxed">
-              Um Mundial exige uma gestão de unidades diferente de uma liga regular. Vais receber o plano financeiro exato para a competição.
+              Odds altas exigem uma gestão de unidades diferente. Vais receber o plano financeiro exato para este tipo de entradas.
             </p>
           </div>
 

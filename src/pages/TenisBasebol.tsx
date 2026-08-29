@@ -12,7 +12,7 @@ import {
 
 const TELEGRAM_LINK = 'https://t.me/+vCEfAW17SsAxMDQ0';
 
-export default function TenisBasebol() {
+export default function Tenis() {
   return (
     <div className="space-y-10 animate-in fade-in duration-500 pb-16">
 
@@ -21,10 +21,10 @@ export default function TenisBasebol() {
         <div>
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight flex items-center gap-3 drop-shadow-lg">
             <Activity className="w-10 h-10 text-amber-400" />
-            Cadete no <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-lime-400">Ténis &amp; Basebol</span>
+            Cadete no <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-lime-400">Ténis</span>
           </h1>
           <p className="mt-3 text-blue-200/70 max-w-2xl text-lg">
-            Sai do futebol e diversifica. Análises e apostas focadas em dois desportos cheios de valor e oportunidades escondidas do grande público.
+            Sai do futebol e diversifica. Análises e apostas focadas no ténis, um desporto cheio de valor e oportunidades escondidas do grande público.
           </p>
         </div>
 
@@ -34,13 +34,13 @@ export default function TenisBasebol() {
             <Award className="w-6 h-6 text-amber-400" />
           </div>
           <div>
-            <p className="text-xs font-bold text-amber-400/80 uppercase tracking-widest">Modalidades</p>
-            <p className="text-lg font-black text-white">Ténis + MLB</p>
+            <p className="text-xs font-bold text-amber-400/80 uppercase tracking-widest">Modalidade</p>
+            <p className="text-lg font-black text-white">Ténis</p>
           </div>
         </div>
       </div>
 
-      {/* Banner Principal (Estilo Multi-Desporto) */}
+      {/* Banner Principal */}
       <div className="bg-gradient-to-r from-amber-500 to-lime-500 rounded-3xl p-1 shadow-[0_0_40px_rgba(245,158,11,0.2)]">
         <div className="bg-[#03091a] rounded-[22px] p-8 md:p-12 relative overflow-hidden">
 
@@ -59,10 +59,10 @@ export default function TenisBasebol() {
 
               <div>
                 <h2 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight">
-                  Dois Desportos, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-lime-400">Uma Vantagem</span>
+                  Um Desporto, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-lime-400">Todo o Ano</span>
                 </h2>
                 <p className="text-blue-200/80 text-lg leading-relaxed">
-                  Do serviço ao home run: o ténis e o basebol oferecem mercados líquidos e cheios de valor. Deixa o Cadete guiar as tuas entradas nestas modalidades.
+                  O ténis oferece mercados líquidos e cheios de valor, com jogos praticamente todos os dias. Deixa o Cadete guiar as tuas entradas nesta modalidade.
                 </p>
               </div>
 
@@ -88,18 +88,18 @@ export default function TenisBasebol() {
               </div>
             </div>
 
-            {/* Direita: Imagem multi-desporto */}
+            {/* Direita: Imagem */}
             <div className="relative rounded-2xl overflow-hidden border-2 border-amber-500/30 shadow-2xl group h-full min-h-[400px]">
               <div className="absolute inset-0 bg-gradient-to-t from-[#03091a] via-[#03091a]/40 to-transparent opacity-90 z-10 transition-opacity group-hover:opacity-70"></div>
               <img
                 src="/cadete_main.jpeg"
-                alt="Cadete no Ténis & Basebol"
+                alt="Cadete no Ténis"
                 className="absolute inset-0 w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute bottom-8 left-8 right-8 z-20 space-y-3">
                 {[
                   'Palpites de ténis (ATP, WTA & Grand Slams)',
-                  'Apostas MLB e ligas de basebol',
+                  'Análises de jogos e superfícies',
                   'Mercados de valor com odds trabalhadas'
                 ].map((feature, i) => (
                   <div key={i} className="flex items-center gap-3 bg-black/40 backdrop-blur-md rounded-lg p-3 border border-white/10">
@@ -118,7 +118,7 @@ export default function TenisBasebol() {
       <div className="space-y-6 pt-4">
         <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
           <Target className="w-6 h-6 text-amber-400" />
-          Porquê apostar noutras modalidades?
+          Porquê apostar em ténis?
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -136,9 +136,9 @@ export default function TenisBasebol() {
             <div className="w-12 h-12 rounded-full bg-amber-500/10 flex items-center justify-center mb-4 border border-amber-500/20 group-hover:scale-110 transition-transform">
               <Trophy className="w-6 h-6 text-amber-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Basebol de Elite</h3>
+            <h3 className="text-xl font-bold text-white mb-2">Estatística ao Detalhe</h3>
             <p className="text-blue-200/70 text-sm leading-relaxed">
-              A MLB e outras ligas são um manancial de estatística. Um terreno perfeito para apostas fundamentadas em dados.
+              Head-to-heads, forma recente e superfícies dão um terreno perfeito para apostas fundamentadas em dados.
             </p>
           </div>
 

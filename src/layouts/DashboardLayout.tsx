@@ -12,8 +12,9 @@ import {
   Menu, // Ícone do hambúrguer
   X, // Ícone para fechar
   Shield, // Ícone Admin
-  Swords, // Ícone Submundo
-  Activity // Ícone Ténis & Basebol
+  Swords, // Ícone Tips da Bruna
+  Activity, // Ícone Ténis
+  Send // Ícone Tips do Manel
 } from 'lucide-react';
 import SocialProofNotifications from '../components/SocialProofNotifications';
 import { useAuth } from '../contexts/AuthContext';
@@ -38,9 +39,10 @@ export default function DashboardLayout() {
     { name: 'Início', path: '/inicio', icon: LayoutDashboard },
     { name: 'Gestão de Banca', path: '/gestao', icon: LineChart },
     { name: 'Desafios do Cadete', path: '/desafios', icon: Star },
-    { name: 'Mundial 2026', path: '/mundial-2026', icon: Trophy },
-    { name: 'Cadete no Submundo', path: '/submundo', icon: Swords },
-    { name: 'Ténis & Basebol', path: '/tenis-basebol', icon: Activity },
+    { name: 'Abaixo de 3 é Para Meninos', path: '/abaixo-de-3', icon: Trophy },
+    { name: 'Tips da Bruna', path: '/submundo', icon: Swords },
+    { name: 'Tips do Manel', path: '/tips-do-manel', icon: Send },
+    { name: 'Ténis', path: '/tenis-basebol', icon: Activity },
     { name: 'Análise Premium', path: '/analise-premium', icon: FileText },
     { name: 'Coldbet Casino', path: '/coldbet', icon: Sparkles },
   ];
